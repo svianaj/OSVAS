@@ -1,0 +1,10 @@
+pandas
+matplotlib
+scipy
+numpy
+meteo @ git+https://github.com/hendrikwout/meteo.git
+xarray
+netCDF4
+cftime
+icoscp
+
