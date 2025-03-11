@@ -11,9 +11,9 @@ set -x
 ###   select validation station, namelists to import, make run & output paths #####################
 ###################################################################################################
 
-SURFEX_HOME=$HOME/SURFEX_NWP_RSL                  #SET PATH TO YOUR SURFEX SETUP
+SURFEX_HOME=$HOME/SURFEX_NWP_MPI                  #SET PATH TO YOUR SURFEX SETUP
 OSVAS_HOME=$HOME/OSVAS                            #SET PATH TO YOUR OSVAS SETUP
-PHYSIO_HOME=$HOME/SURFEX_NWP_RSL/MY_R UN/ECOCLIMAP #SET PATH TO YOUR PHYSIOGRAPHY FILES
+PHYSIO_HOME=$HOME/SURFEX_NWP_RSL/MY_RUN/ECOCLIMAP #SET PATH TO YOUR PHYSIOGRAPHY FILES
 
 # Define path of SURFEX code and SURFEX executables, add to $PATH
 SURFEXPATH=${SURFEX_HOME}/src/SURFEX/
@@ -26,28 +26,37 @@ which OFFLINE
 wait 4
 
 #Select name of the Station where to run the simulation, and the experiment name to import the namelist there
-STATION='Fyodorovskoye'   # Currently select between Majadas_south and Fyodorovskoye
-EXPNAME='DIFMEB_3P_LOCAL_PHYSIO'  #This is the end part of the name of the namelists file to import
-cd $OSVAS_HOME/$STATION
+STATION='Majadas_south'   # Currently select between Majadas_south (ES), Meteopole(FR), Loobos(NL)
 
-mkdir $OSVAS_HOME/$STATION/$EXPNAME
-mkdir $OSVAS_HOME/$STATION/$EXPNAME/run
-mkdir $OSVAS_HOME/$STATION/$EXPNAME/output
+#It is assumed that there are working namelists in 
+#$OSVAS_HOME/namelists/$STATION
+#And forcings in $OSVAS_HOME/forcings/$STATION
+#Loop through the defined EXPNAMES, make experiment directories,
+#copy the corresponding namelists, run the offline experiment:
+for EXPNAME in DIFMEB_3P_LOCAL_PHYSIO DIFMEB_3P_ECOSG_PHYSIO; do
 
-cp $OSVAS_HOME/Fyodorovskoye_test_run/forcing_run/* $SURFEX_HOME/$EXPNAME/run/
-cp $OSVAS_HOME/Fyodorovskoye_test_run/namelists/OPTIONS.nam_${EXPNAME} $SURFEX_HOME/$EXPNAME/run/OPTIONS.nam
-ln -s $PHYSIO_HOME/* $OSVAS_HOME/$EXPNAME/run/
+mkdir -p $OSVAS_HOME/RUNS/$STATION/$EXPNAME/run/
+mkdir -p $OSVAS_HOME/RUNS/$STATION/$EXPNAME/output/
+
+#link forcings in execution folder
+ln -s $OSVAS_HOME/forcing/$STATION/* $OSVAS_HOME/RUNS/$STATION/$EXPNAME/run/
+#Copy namelist to execution folder
+cp $OSVAS_HOME/namelists/$STATION/OPTIONS.nam_${EXPNAME} $OSVAS_HOME/RUNS/$STATION/$EXPNAME/run/OPTIONS.nam
+#Link physiographic files to execution folder
+ln -s $PHYSIO_HOME/* $OSVAS_HOME/RUNS/$STATION/$EXPNAME/run/
+
+#Enter the execution folder and run the offline experiment
+cd $OSVAS_HOME/RUNS/$STATION/$EXPNAME/run/
 
 PGD
 PREP
 OFFLINE
-#exit
-cp *OUT.nc ./$EXPNAME/run/
-cp OPTIONS.nam ./$EXPNAME/run/
-cp LISTI* ./$EXPNAME/run/
-cp Param* ./$EXPNAME/run/
 
+#Move output files to the output folder of the experiment
+cp *OUT.nc $OSVAS_HOME/$STATION/$EXPNAME/output/
+cp OPTIONS.nam $OSVAS_HOME/$STATION/$EXPNAME/output/
+cp LISTI* $OSVAS_HOME/$STATION/$EXPNAME/output/
+cp Param* $OSVAS_HOME/$STATION/$EXPNAME/output/
 
-
-
+#end loop
 done
