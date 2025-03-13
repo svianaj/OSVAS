@@ -26,7 +26,7 @@ ECOSG_COVERS=$ECOSG_DATA_PATH/COVER
 
 
 # Define path of SURFEX code and SURFEX executables, add to $PATH
-SURFEXPATH=${SURFEX_HOME}/src/SURFEX/
+#SURFEXPATH=${SURFEX_HOME}/src/SURFEX/
 SURFEXEXE=${SURFEX_HOME}/dir_obj-atos-gnu-SFX-V8-1-1-MPIAUTO-OMP-O2-X0/MASTER/
 
 # Add these to the $PATH
@@ -41,14 +41,14 @@ source $SURFEXPROFILE
 which OFFLINE
 
 #Select name of the Station where to run the simulation, and the experiment name to import the namelist there
-STATION='Majadas_south'   # Currently select between Majadas_south (ES), Meteopole(FR), Loobos(NL)
+STATION='Meteopole'   # Currently select between Majadas_south (ES), Meteopole(FR), Loobos(NL)
 
 #It is assumed that there are working namelists in 
 #$OSVAS_HOME/namelists/$STATION
 #And forcings in $OSVAS_HOME/forcings/$STATION
 #Loop through the defined EXPNAMES, make experiment directories,
 #copy the corresponding namelists, run the offline experiment:
-for EXPNAME in 3pDIFMEB_NWPlike; do
+for EXPNAME in DIFMEB; do
 
 mkdir -p $OSVAS_HOME/RUNS/$STATION/$EXPNAME/run/
 mkdir -p $OSVAS_HOME/RUNS/$STATION/$EXPNAME/output/
@@ -73,6 +73,7 @@ ln -s $ECOSG_DATA_PATH/LAI_SAT/* $RUNDIR
 ln -s $ECOSG_DATA_PATH/ALB_SAT/* $RUNDIR
 ln -s $ECOSG_DATA_PATH/COVER/* $RUNDIR
 ln -s $ECOSG_DATA_PATH/HT/* $RUNDIR
+ln -s ${SURFEX_HOME}/MY_RUN/ECOCLIMAP/* $RUNDIR
 ln -s /ec/res4/scratch/sp3c/hm_home/dev_CY46h1_difmeb_py/climate/IBERIAxl_2.5/gmted2010* $RUNDIR
 ln -s /ec/res4/scratch/sp3c/hm_home/dev_CY46h1_difmeb_py/climate/IBERIAxl_2.5/*SOILGRID* $RUNDIR
 
@@ -81,8 +82,8 @@ ln -s /ec/res4/scratch/sp3c/hm_home/dev_CY46h1_difmeb_py/climate/IBERIAxl_2.5/*S
 #Enter the execution folder and run the offline experiment
 cd $RUNDIR
 
-#PGD 
-#PREP
+PGD 
+PREP
 OFFLINE
 
 #Move output files to the output folder of the experiment
