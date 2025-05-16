@@ -1,5 +1,9 @@
 import glob
 
+# This script helps to generate a single namelists from 
+# binary-separated SURFEX namelists, i.e. OPTIONS_{PGD,PREP,OFFLINE}
+# and arranges namelist blocks alphabetically
+
 def read_namelists(filenames):
     namelists = {}
     current_block = []
@@ -34,11 +38,13 @@ def write_sorted_namelists(namelists, output_file):
 def main():
     input_files = sorted(glob.glob("OPTIONS*"))  # Find all matching files
     namelists = read_namelists(input_files)
-    
+    print('input_files detected:')
+    print(input_files)
     if not namelists:
         print("No valid namelists found.")
         return
-
+    print('namelists detected:')
+    print(namelists)
     write_sorted_namelists(namelists, "sorted_namelist.txt")
     print("Sorted namelists written to sorted_namelist.txt")
 
