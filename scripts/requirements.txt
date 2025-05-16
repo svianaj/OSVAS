@@ -2,7 +2,7 @@ pandas
 matplotlib
 scipy
 numpy
-meteo @ git+https://github.com/hendrikwout/meteo.git
+metPy
 xarray
 netCDF4
 cftime
