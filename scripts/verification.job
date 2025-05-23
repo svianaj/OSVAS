@@ -1,0 +1,17 @@
+#!/bin/bash 
+#This part is only for running in SLURP at ecmwf
+#SBATCH --output=OSHARP.out
+#SBATCH --job-name=osharp
+#SBATCH --cpus-per-task=8
+#SBATCH --mem-per-cpu=16000
+#SBATCH --ntasks=1
+#SBATCH --qos=nf
+#SBATCH --time=23:30:00
+
+
+set -x 
+module load R
+cd /home/sp3c/deode_project/oper-harp-verif/
+/home/sp3c/deode_project/oper-harp-verif/verification/point_verif.R -config_file /perm/sp3c/OSVAS/config_files/OSVAS_HARP_verif.yml -start_date 2016060100 -end_date 2016062900 -params_list=H,LE -params_file=/perm/sp3c/OSVAS/sqlites/harp/config/set_params.R
+
+
