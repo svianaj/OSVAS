@@ -1,0 +1,60 @@
+Station_metadata:
+  Station_name: Meteopole
+  SID: 4300000006
+  elev: 265.0
+  lat: 43.572857
+  lon: 1.37474
+  vegtype: 158
+
+Forcing_data:
+  height_T: 2                       # Height of the temperature measurement
+  height_V: 10                      # Height of the windspeed   measurement
+  run_start: '2021-4-30 23:00:00'    # Timestamp for the forcing start
+  run_end: '2022-7-1 00:00:00'      # Timestamp for the forcing end
+  forcing_format: 'ascii'          # Choose between netcdf or ascii
+  dataset1:
+    doi: https://meta.icos-cp.eu/objects/VIoR-cJnMUUjbaEkuNHMKgSv
+    timedelta: 30  # in minutes
+    variables:
+      Forc_CO2: 
+      Forc_PS: PA
+      Forc_RAIN: P
+      Forc_SNOW: 
+      Forc_WIND: WS
+      Forc_DIR: WD      
+      Forc_DIR_SW: SW_IN
+      Forc_LW: LW_IN
+      Forc_QA: 
+      Forc_SCA_SW: 
+      Forc_TA: TA
+      Forc_RH: RH
+Validation_data:
+  validation_start: '2021-4-30 23:00:00'
+  validation_end: '2022-7-1 00:00:00'
+  dataset1: 
+    doi: https://meta.icos-cp.eu/objects/VIoR-cJnMUUjbaEkuNHMKgSv
+    timedelta: 30
+    variables:
+      SW_OUT: SW_OUT
+      LW_OUT: LW_OUT
+      TS_1: TS_1
+      TS_2: TS_2
+      TS_3: TS_3
+      TS_4: TS_4
+      TS_5: TS_5
+      SWC_1: SWC_1
+      SWC_2: SWC_2
+      SWC_3: SWC_3
+      SWC_4: SWC_4
+      SWC_5: SWC_5
+      G: G
+  dataset2: 
+    doi: https://meta.icos-cp.eu/objects/No7s1uuHhY2frqKUg6CSIRV-
+    timedelta: 30
+    variables:
+     H: H_F_MDS
+     LE: LE_F_MDS
+     VPD: VPD_F
+     NEE: NEE_VUT_REF
+
+

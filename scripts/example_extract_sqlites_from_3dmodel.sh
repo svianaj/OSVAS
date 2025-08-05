@@ -31,7 +31,7 @@ module load python3
 #debug level, path & file naming scheme for input gribfiles, etc.
 EXPERIMENT_NAME=AIBC_ibera
 STATION_LIST=$OSVAS_HOME/sqlites/station_list_SURFEX.csv
-PARAM_LIST=$OSVAS_HOME/sqlites/param_list_SURFEX.csv
+PARAM_LIST=$OSVAS_HOME/config_files/HARP/param_list_SURFEX.csv
 OUTPUT=$OSVAS_HOME/sqlites/data/
 DEBUG_LEVEL=2
 #Path to gribs: wildcards allowed, current example is to extract only from 00 runs
