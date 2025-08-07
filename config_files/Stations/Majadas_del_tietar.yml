@@ -16,9 +16,9 @@ Forcing_data:
     doi: https://meta.icos-cp.eu/objects/fPAqntOb1uiTQ2KI1NS1CHlB
     timedelta: 30  # in minutes
     variables:
-      Forc_CO2: 
-      Forc_PS: PA
-      Forc_RAIN: P
+      Forc_CO2: -, 0.00062
+      Forc_PS: PA, *1000
+      Forc_RAIN: P, /(timedelta*60)
       Forc_SNOW: 
       Forc_WIND: WS
       Forc_DIR: WD      
@@ -26,7 +26,7 @@ Forcing_data:
       Forc_LW: LW_IN
       Forc_QA: 
       Forc_SCA_SW: 
-      Forc_TA: TA
+      Forc_TA: TA, +273.15
       Forc_RH: RH
 Validation_data:
   validation_start: '2021-4-30 23:00:00'
