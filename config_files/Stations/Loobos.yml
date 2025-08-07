@@ -1,0 +1,65 @@
+Station_metadata:
+  Station_name: Loobos
+  SID: 4300000007
+  elev: 33
+  lat: 52.166447
+  lon: 5.74355
+  vegtype: 15
+  lai: 1.9,1.9,1.9,1.9,1.9,1.9,1.9,1.9,1.9,1.9,1.9,1.9
+
+Forcing_data:
+  height_T: 2                       # Height of the temperature measurement
+  height_V: 10                      # Height of the windspeed   measurement
+  run_start: '2023-4-30 23:00:00'    # Timestamp for the forcing start
+  run_end: '2024-7-1 00:00:00'      # Timestamp for the forcing end
+  forcing_format: 'netcdf'          # Choose between netcdf or ascii
+  dataset1:
+    doi: https://meta.icos-cp.eu/objects/VIoR-cJnMUUjbaEkuNHMKgSv
+    timedelta: 30  # in minutes
+    variables:
+      Forc_CO2: -, 0.00062
+      Forc_PS: PA, *1000
+      Forc_RAIN: P, /(timedelta*60)
+      Forc_SNOW: 
+      Forc_WIND: WS
+      Forc_DIR: WD      
+      Forc_DIR_SW: SW_IN
+      Forc_LW: LW_IN
+      Forc_QA: 
+      Forc_SCA_SW: 
+      Forc_TA: TA, +273.15
+      Forc_RH: RH
+dataset2:
+    doi: https://meta.icos-cp.eu/objects/7ugz7AWJtLDjK9s5nBjjnQog
+    timedelta: 30  # in minutes
+    variables:
+      Forc_VPD: VPD
+Validation_data:
+  validation_start: '2023-4-30 23:00:00'
+  validation_end: '2024-7-1 00:00:00'
+  dataset1: 
+    doi: https://meta.icos-cp.eu/objects/VIoR-cJnMUUjbaEkuNHMKgSv
+    timedelta: 30
+    variables:
+      SW_OUT: SW_OUT
+      LW_OUT: LW_OUT
+      TS_1: TS_1
+      TS_2: TS_2
+      TS_3: TS_3
+      TS_4: TS_4
+      TS_5: TS_5
+      SWC_1: SWC_1
+      SWC_2: SWC_2
+      SWC_3: SWC_3
+      SWC_4: SWC_4
+      SWC_5: SWC_5
+      G: G
+  dataset2: 
+    doi: https://meta.icos-cp.eu/objects/Hz_PRfzpkwrLsuZWhrwzCzDm
+    timedelta: 30
+    variables:
+     H: H_F_MDS
+     LE: LE_F_MDS
+     VPD: VPD_F
+     NEE: NEE_VUT_REF
+
