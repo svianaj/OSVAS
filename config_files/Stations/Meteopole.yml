@@ -38,6 +38,8 @@ Validation_data:
     variables:
       SW_OUT: SW_OUT
       LW_OUT: LW_OUT
+      SW_IN: SW_IN
+      LW_IN: LW_IN  
       TS_1: TS_1
       TS_2: TS_2
       TS_3: TS_3

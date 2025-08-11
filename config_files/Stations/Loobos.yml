@@ -6,43 +6,46 @@ Station_metadata:
   lon: 5.74355
   vegtype: 15
   lai: 1.9,1.9,1.9,1.9,1.9,1.9,1.9,1.9,1.9,1.9,1.9,1.9
+  closure_type: 1
 
 Forcing_data:
-  height_T: 2                       # Height of the temperature measurement
-  height_V: 10                      # Height of the windspeed   measurement
+  height_T: 38.2  # Height of the temperature measurement https://maq-observations.nl/operational-data/
+  height_V: 38.2  # Height of the windspeed   measurement https://maq-observations.nl/operational-data/
   run_start: '2023-4-30 23:00:00'    # Timestamp for the forcing start
   run_end: '2024-7-1 00:00:00'      # Timestamp for the forcing end
   forcing_format: 'netcdf'          # Choose between netcdf or ascii
   dataset1:
-    doi: https://meta.icos-cp.eu/objects/VIoR-cJnMUUjbaEkuNHMKgSv
+    doi: https://meta.icos-cp.eu/objects/7ugz7AWJtLDjK9s5nBjjnQog
     timedelta: 30  # in minutes
     variables:
       Forc_CO2: -, 0.00062
       Forc_PS: PA, *1000
       Forc_RAIN: P, /(timedelta*60)
       Forc_SNOW: 
-      Forc_WIND: WS
-      Forc_DIR: WD      
+      Forc_WIND: WS_1
+      Forc_DIR: WD_1    
       Forc_DIR_SW: SW_IN
       Forc_LW: LW_IN
       Forc_QA: 
       Forc_SCA_SW: 
-      Forc_TA: TA, +273.15
+      Forc_TA: TA_1, +273.15
       Forc_RH: RH
-dataset2:
+  dataset2:
     doi: https://meta.icos-cp.eu/objects/7ugz7AWJtLDjK9s5nBjjnQog
     timedelta: 30  # in minutes
     variables:
       Forc_VPD: VPD
 Validation_data:
-  validation_start: '2023-4-30 23:00:00'
+  validation_start: '2023-5-15 23:00:00'
   validation_end: '2024-7-1 00:00:00'
   dataset1: 
-    doi: https://meta.icos-cp.eu/objects/VIoR-cJnMUUjbaEkuNHMKgSv
+    doi: https://meta.icos-cp.eu/objects/7ugz7AWJtLDjK9s5nBjjnQog
     timedelta: 30
     variables:
       SW_OUT: SW_OUT
       LW_OUT: LW_OUT
+      LW_IN: LW_IN
+      SW_IN: SW_IN
       TS_1: TS_1
       TS_2: TS_2
       TS_3: TS_3
@@ -53,7 +56,7 @@ Validation_data:
       SWC_3: SWC_3
       SWC_4: SWC_4
       SWC_5: SWC_5
-      G: G
+      G: G_2
   dataset2: 
     doi: https://meta.icos-cp.eu/objects/Hz_PRfzpkwrLsuZWhrwzCzDm
     timedelta: 30
