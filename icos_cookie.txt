@@ -1,0 +1,1 @@
+Paste here the API token that you'll find at the bottom of https://cpauth.icos-cp.eu/home/ once you're authenticated in the ICOS site. This token lasts for about 24h.
