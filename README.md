@@ -48,6 +48,8 @@ Station_metadata:
   lon: 1.37474
   vegtype: 10
   lai: 1.85,1.50,1.72,2.35,2.15,1.37,1.3,1.25,1.37,1.45,1.3,1.25
+  closure_type: 1 # 1 for instantaneous BR closure, 2 for daily BR closure, 3 & 4 for inclusion of canopy storage
+                  # (more details in ICOS_Flux_downloader jupyter notebook
 
 Forcing_data:
   height_T: 2                       # Height of the temperature measurement
@@ -99,7 +101,7 @@ Validation_data:
      LE: LE_F_MDS
      VPD: VPD_F
      NEE: NEE_VUT_REF
-``
+```
 The configuration file above will be treated by Write_ICOS_forcing to generate forcing files in ascci or netcdf format according to the defined datasets and transformations.
 It will also be used by ICOS_Flux_downloader to generate a validation dataset from the different ICOS datasets specified in the Validation_data block.
 In both cases, if several datasets with different sampling rates are provided, the data will be upsampled to a common (smallest) timedelta.
