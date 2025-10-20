@@ -38,6 +38,7 @@ Forcing_data:
 Validation_data:
   validation_start: '2023-5-15 23:00:00'
   validation_end: '2024-7-1 00:00:00'
+  common_obstable: TRUE
   dataset1: 
     doi: https://meta.icos-cp.eu/objects/7ugz7AWJtLDjK9s5nBjjnQog
     timedelta: 30

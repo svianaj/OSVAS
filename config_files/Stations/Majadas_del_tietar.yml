@@ -29,9 +29,9 @@ Forcing_data:
       Forc_TA: TA, +273.15
       Forc_RH: RH
 Validation_data:
-  validation_start: '2022-4-1 23:00:00'
-  validation_end: '2022-6-28 23:00:00'
-  common_obstable: FALSE  # Write obs to a common obstable or to a single-station one
+  validation_start: '2021-7-1 23:00:00'
+  validation_end: '2021-9-28 23:00:00'
+  common_obstable: TRUE  # Write obs to a common obstable or to a single-station one
   dataset1: 
     doi: https://meta.icos-cp.eu/objects/fPAqntOb1uiTQ2KI1NS1CHlB
     timedelta: 30
