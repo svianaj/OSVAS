@@ -14,7 +14,7 @@ OSVAS is a set of scripts and namelists developed within the ACCORD community to
 ### Running Simulations
 - A functional **SURFEX installation** is required.
 - Ensure SURFEX is correctly referenced in `surfex_OSVAS_run.sh`.
-- 
+  
 ## Features
 
 ### 1. Forcing Data Preparation
@@ -39,7 +39,7 @@ OSVAS is a set of scripts and namelists developed within the ACCORD community to
   2. **NWP-like conditions**: Uses the same physiographic datasets as operational NWP runs. This can be achieved by running PGD for every site on ATOS, BELENOS, etc (where all phisiographic files are available) and extracting the PGD values to the namelist, or simply run all simulations (PGD-PREP-OFFLINE) under those HPCs.
 
 ### 4. Download of Validation data from ICOS specialized stations.
-The jupyter notebook ICOS_Flux_downloader retrieves the data and saves it as OBSTABLE sqlite files, which can be used by HARP, custom-made verification scripts or other validation tools. Info about the ICOS dataset(s) from where to extract the validation variables must be included in the "Validation_data" section of the yaml files. The sampling frequency, how to rename the ICOS variables in the sqlite file and the validation period must also be specified.
+The jupyter notebook `ICOS_Flux_downloader.ipynb` retrieves the data and saves it as OBSTABLE sqlite files, which can be used by HARP, custom-made verification scripts or other validation tools. Info about the ICOS dataset(s) from where to extract the validation variables must be included in the "Validation_data" section of the yaml files. The sampling frequency, how to rename the ICOS variables in the sqlite file and the validation period must also be specified. Stations are identified with a Station ID (SID), making possible to write the validation data to a common obstable for all stations. This is controlled by common_obstable key in the yaml file (see example below)
 
 ### Example of yaml config file for "Meteopole" station and syntax (read comments for details)
 ```
@@ -79,6 +79,7 @@ Forcing_data:
 Validation_data:
   validation_start: '2021-4-30 23:00:00'
   validation_end: '2022-7-1 00:00:00'
+  common_obstable: TRUE  # Write obs to a common obstable or to a single-station one
   dataset1: 
     doi: https://meta.icos-cp.eu/objects/VIoR-cJnMUUjbaEkuNHMKgSv
     timedelta: 30
@@ -105,9 +106,9 @@ Validation_data:
      VPD: VPD_F
      NEE: NEE_VUT_REF
 ```
-The configuration file above will be treated by Write_ICOS_forcing to generate forcing files in ascci or netcdf format according to the defined datasets and transformations, and by ICOS_Flux_downloader to generate a validation dataset from the different ICOS datasets specified in the Validation_data block. In both cases, if several datasets with different sampling rates are provided, the data will be upsampled to a common (smallest) timedelta.
+The configuration file above will be treated by `Write_ICOS_forcing.ipynb` to generate forcing files in ascci or netcdf format according to the defined datasets and transformations, and by `ICOS_Flux_downloader.ipynb` to generate a validation dataset from the different ICOS datasets specified in the Validation_data block. In both cases, if several datasets with different sampling rates are provided, the data will be upsampled to a common (smallest) timedelta.
 
 ## Next Steps
-- Additional scripts for **model output validation** will be included soon.
+- Additional instructions for **model output validation** will be included soon.
 
 
