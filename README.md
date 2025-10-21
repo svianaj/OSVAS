@@ -3,6 +3,18 @@
 
 OSVAS is a set of scripts and namelists developed within the ACCORD community to provide a systematic approach for testing NWP-like SURFEX settings over specialized Atmospheric & Ecosystem stations from the ICOS project. It also facilitates validation of results using flux data from the same source.
 
+## Installation
+### Python Environment
+- The required Python packages are listed in `requirements.txt`.
+- Install using:
+  ```sh
+  pip install -r requirements.txt
+  ```
+
+### Running Simulations
+- A functional **SURFEX installation** is required.
+- Ensure SURFEX is correctly referenced in `surfex_OSVAS_run.sh`.
+- 
 ## Features
 
 ### 1. Forcing Data Preparation
@@ -26,19 +38,10 @@ OSVAS is a set of scripts and namelists developed within the ACCORD community to
   1. **Self-contained**: Uses physiographic data derived from station metadata, without external dependencies.
   2. **NWP-like conditions**: Uses the same physiographic datasets as operational NWP runs. This can be achieved by running PGD for every site on ATOS, BELENOS, etc (where all phisiographic files are available) and extracting the PGD values to the namelist, or simply run all simulations (PGD-PREP-OFFLINE) under those HPCs.
 
-## Installation
-### Python Environment
-- The required Python packages are listed in `requirements.txt`.
-- Install using:
-  ```sh
-  pip install -r requirements.txt
-  ```
+### 4. Download of Validation data from ICOS specialized stations.
+The jupyter notebook ICOS_Flux_downloader retrieves the data and saves it as OBSTABLE sqlite files, which can be used by HARP, custom-made verification scripts or other validation tools. Info about the ICOS dataset(s) from where to extract the validation variables must be included in the "Validation_data" section of the yaml files. The sampling frequency, how to rename the ICOS variables in the sqlite file and the validation period must also be specified.
 
-### Running Simulations
-- A functional **SURFEX installation** is required.
-- Ensure SURFEX is correctly referenced in `surfex_OSVAS_run.sh`.
-
-### Example of yaml config file and syntax (read comments for details)
+### Example of yaml config file for "Meteopole" station and syntax (read comments for details)
 ```
 Station_metadata:
   Station_name: Meteopole
@@ -102,9 +105,7 @@ Validation_data:
      VPD: VPD_F
      NEE: NEE_VUT_REF
 ```
-The configuration file above will be treated by Write_ICOS_forcing to generate forcing files in ascci or netcdf format according to the defined datasets and transformations.
-It will also be used by ICOS_Flux_downloader to generate a validation dataset from the different ICOS datasets specified in the Validation_data block.
-In both cases, if several datasets with different sampling rates are provided, the data will be upsampled to a common (smallest) timedelta.
+The configuration file above will be treated by Write_ICOS_forcing to generate forcing files in ascci or netcdf format according to the defined datasets and transformations, and by ICOS_Flux_downloader to generate a validation dataset from the different ICOS datasets specified in the Validation_data block. In both cases, if several datasets with different sampling rates are provided, the data will be upsampled to a common (smallest) timedelta.
 
 ## Next Steps
 - Additional scripts for **model output validation** will be included soon.
