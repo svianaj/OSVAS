@@ -110,11 +110,15 @@ The configuration file above will be treated by `Write_ICOS_forcing.ipynb` to ge
 
 ### 5. Convert SURFEX OFFLINE output data from ncfile to sqlite FCTABLES, for use in HARP.
 
-Similarly to grib2sqlite[https://github.com/destination-earth-digital-twins/grib2sqlite] utility, a new python tool has been created here to help extract SURFEX output variables from single-point OFFLINE SURFEX RUNS into FCTABLES suitable for use with HarPoint / oper-harp-verif[https://github.com/harphub/oper-harp-verif] , or with other custom made verification software capable to read observations & simulation data from sqlite files. This tool needs a dictionary of SURFEX variable names to observation variable names (i.e. variable names in the OBSTABLES). In order to use oper-harp-verif, they should also be defined in set_params.R from this set of scripts. In the future, nc2sqlite tool could be extended to allow data extraction from 2-D SURFEX offline runs, i.e. through interpolation from the NetCDF grid.
+Similarly to [grib2sqlite](https://github.com/destination-earth-digital-twins/grib2sqlite) utility, a new python tool has been created here to help extract SURFEX output variables from single-point OFFLINE SURFEX RUNS into FCTABLES suitable for use with HarPoint / [oper-harp-verif](https://github.com/harphub/oper-harp-verif) , or with other custom made verification software capable to read observations & simulation data from sqlite files. This tool needs a dictionary of SURFEX variable names to observation variable names (i.e. variable names present in the OBSTABLES files to be used for the validation). In order to use oper-harp-verif, these observation variable names should also be properly defined in file set_params.R from this set of scripts. In the future, nc2sqlite tool could be extended to allow data extraction from 2-D SURFEX offline runs, i.e. through interpolation from the NetCDF grid.
 
+```
 usage: nc2sqlite.py [-h] -p PARAM_LIST -s STATION_LIST -st STATION -o OUTPUT -m EXPERIMENT_NAME ncdir
 
 Convert point NetCDF SURFEX output to SQLite.
+The script will create a EXPERIMENT_NAME folder in the OUTPUT path,
+which will be populated with monthly FCTABLES for every variable
+in the PARAM_LIST, stored in YYYY/MM subfolders
 
 positional arguments:
   ncdir                 Directory containing NetCDF files
@@ -127,11 +131,11 @@ options:
                         Path to station_list_default.csv
   -st STATION, --station STATION
                         Station ID
-  -o OUTPUT, --output OUTPUT
+  -o OUTPUT PATH, --output OUTPUT PATH
                         Output base directory
   -m EXPERIMENT_NAME, --experiment_name EXPERIMENT_NAME
                         Experiment name
-
+```
 
 ## Next Steps
 - Additional instructions for **model output validation** will be included soon.
