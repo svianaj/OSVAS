@@ -9,9 +9,9 @@ Station_metadata:
 Forcing_data:
   height_T: 2                       # Height of the temperature measurement
   height_V: 10                      # Height of the windspeed   measurement
-  run_start: '2021-4-30 23:00:00'    # Timestamp for the forcing start
-  run_end: '2022-7-1 00:00:00'      # Timestamp for the forcing end
-  forcing_format: 'ascii'          # Choose between netcdf or ascii
+  run_start: '2021-5-01 00:00:00'    # Timestamp for the forcing start
+  run_end: '2021-7-1 00:00:00'      # Timestamp for the forcing end
+  forcing_format: 'netcdf'          # Choose between netcdf or ascii
   dataset1:
     doi: https://meta.icos-cp.eu/objects/fPAqntOb1uiTQ2KI1NS1CHlB
     timedelta: 30  # in minutes
@@ -29,8 +29,8 @@ Forcing_data:
       Forc_TA: TA, +273.15
       Forc_RH: RH
 Validation_data:
-  validation_start: '2021-7-1 23:00:00'
-  validation_end: '2021-9-28 23:00:00'
+  validation_start: '2021-5-01 00:00:00'
+  validation_end: '2022-7-1 00:00:00'
   common_obstable: TRUE  # Write obs to a common obstable or to a single-station one
   dataset1: 
     doi: https://meta.icos-cp.eu/objects/fPAqntOb1uiTQ2KI1NS1CHlB
@@ -38,6 +38,8 @@ Validation_data:
     variables:
       SW_OUT: SW_OUT
       LW_OUT: LW_OUT
+      LW_IN: LW_IN
+      SW_IN: SW_IN
       TS_1: TS_1
       TS_2: TS_2
       TS_3: TS_3
@@ -48,6 +50,4 @@ Validation_data:
       SWC_3: SWC_3
       SWC_4: SWC_4
       SWC_5: SWC_5
-      
-
-
+     

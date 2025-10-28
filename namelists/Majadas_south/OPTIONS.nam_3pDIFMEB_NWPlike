@@ -2329,28 +2329,12 @@
                        XUNIF_NATURE = 1.
 /
 
-&nam_io_offline
-    cforcing_filetype = 'NETCDF'
-    cpgdfile = 'PGD'
-    cprepfile = 'PREP'
-    csurffile = 'SURFOUT'
-    csurf_filetype = 'NC'
-    ctimeseries_filetype = 'NC'
-    lfagmap = .true.
-    lrestart = .true.
-    lrestart_2m = .true.
-    lset_forc_zs = .false.
-    nhalo = 0
-    xtstep_output = 1800.0
-    xtstep_surf = 300.
-        LPRINT  = T                       ,
-                       LLIMIT_QAIR          = T       ,
-                       XDELTA_OROG          = 2200.   ,
-                       LRESTART             = T       ,
-                       LOUT_TIMENAME        = T       ,
-                       LWRITE_COORD         = T       ,
-                       NB_READ_FORC         = 0       ,
-                       LALLOW_ADD_DIM       = F
+&NAM_IO_OFFLINE        LPRINT  = T                       ,
+                       CFORCING_FILETYPE =    'NETCDF '   ,
+                       CSURF_FILETYPE =       'NC '   ,
+                       CTIMESERIES_FILETYPE = 'NETCDF'    ,
+                       XTSTEP_SURF = 300.                ,
+                       XTSTEP_OUTPUT = 1800.
 /
 
 &nam_isba
