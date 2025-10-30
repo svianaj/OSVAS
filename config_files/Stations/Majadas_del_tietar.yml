@@ -1,6 +1,6 @@
 Station_metadata:
   Station_name: Majadas_del_tietar
-  SID: 4300000008
+  SID: 4300000005
   elev: 265.0
   lat: 39.94033
   lon: -5.77465
@@ -9,9 +9,9 @@ Station_metadata:
 Forcing_data:
   height_T: 2                       # Height of the temperature measurement
   height_V: 10                      # Height of the windspeed   measurement
-  run_start: '2021-4-30 23:00:00'    # Timestamp for the forcing start
-  run_end: '2022-7-1 00:00:00'      # Timestamp for the forcing end
-  forcing_format: 'ascii'          # Choose between netcdf or ascii
+  run_start: '2021-5-01 00:00:00'    # Timestamp for the forcing start
+  run_end: '2021-7-1 00:00:00'      # Timestamp for the forcing end
+  forcing_format: 'netcdf'          # Choose between netcdf or ascii
   dataset1:
     doi: https://meta.icos-cp.eu/objects/fPAqntOb1uiTQ2KI1NS1CHlB
     timedelta: 30  # in minutes
@@ -29,15 +29,17 @@ Forcing_data:
       Forc_TA: TA, +273.15
       Forc_RH: RH
 Validation_data:
-  validation_start: '2021-7-1 23:00:00'
-  validation_end: '2021-9-28 23:00:00'
-  common_obstable: TRUE  # Write obs to a common obstable or to a single-station one
+  validation_start: '2021-5-01 00:00:00'
+  validation_end: '2021-7-1 00:00:00'
+  common_obstable: FALSE  # Write obs to a common obstable or to a single-station one
   dataset1: 
     doi: https://meta.icos-cp.eu/objects/fPAqntOb1uiTQ2KI1NS1CHlB
     timedelta: 30
     variables:
       SW_OUT: SW_OUT
       LW_OUT: LW_OUT
+      SW_IN: SW_IN
+      LW_IN: LW_IN  
       TS_1: TS_1
       TS_2: TS_2
       TS_3: TS_3
@@ -48,6 +50,27 @@ Validation_data:
       SWC_3: SWC_3
       SWC_4: SWC_4
       SWC_5: SWC_5
-      
-
-
+    units:
+      SW_OUT: W/m^2
+      LW_OUT: W/m^2
+      LW_IN: W/m^2
+      SW_IN: W/m^2
+      TS_1: K
+      TS_2: K
+      TS_3: K
+      TS_4: K
+      TS_5: K        
+      SWC_1: m^3/m^3
+      SWC_2: m^3/m^3
+      SWC_3: m^3/m^3
+      SWC_4: m^3/m^3
+      SWC_5: m^3/m^3
+  dataset2:
+    doi: https://meta.icos-cp.eu/objects/tONKGY9pOYqVInayCYac-4LI
+    timedelta: 30
+    variables:
+      H: H
+      LE: LE
+    units:
+      H: W/m^2
+      LE: W/m^2

@@ -45,8 +45,8 @@ Validation_data:
     variables:
       SW_OUT: SW_OUT
       LW_OUT: LW_OUT
-      LW_IN: LW_IN
       SW_IN: SW_IN
+      LW_IN: LW_IN  
       TS_1: TS_1
       TS_2: TS_2
       TS_3: TS_3
@@ -58,12 +58,36 @@ Validation_data:
       SWC_4: SWC_4
       SWC_5: SWC_5
       G: G_2
+    units:
+      SW_OUT: W/m^2
+      LW_OUT: W/m^2
+      LW_IN: W/m^2
+      SW_IN: W/m^2
+      TS_1: K
+      TS_2: K
+      TS_3: K
+      TS_4: K
+      TS_5: K        
+      SWC_1: m^3/m^3
+      SWC_2: m^3/m^3
+      SWC_3: m^3/m^3
+      SWC_4: m^3/m^3
+      SWC_5: m^3/m^3
+      G: W/m^2
   dataset2: 
     doi: https://meta.icos-cp.eu/objects/Hz_PRfzpkwrLsuZWhrwzCzDm
     timedelta: 30
     variables:
-     H: H_F_MDS
-     LE: LE_F_MDS
-     VPD: VPD_F
-     NEE: NEE_VUT_REF
+      H: H_F_MDS
+      LE: LE_F_MDS
+      VPD: VPD_F
+      NEE: NEE_VUT_REF
+      H: H
+      LE: LE
+    units:
+      H: W/m^2
+      LE: W/m^2
+      VPD: hPa 
+      NEE: W/m^2
+
 

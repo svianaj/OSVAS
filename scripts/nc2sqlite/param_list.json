@@ -1,6 +1,28 @@
+
 {
+    "_comment": "Parameter mapping between SURFEX variable names (left column) and observation variable names",
     "RI_ISBA": "RI",
     "H_ISBA": "H",
-    "LE_ISBA": "LE"
+    "LE_ISBA": "LE",
+    "WG1_ISBA": "SWC_1",
+    "WG2_ISBA": "SWC_2",
+    "WG3_ISBA": "SWC_3",
+    "WG4_ISBA": "SWC_4",
+    "WG5_ISBA": "SWC_5",
+    "WG6_ISBA": "SWC_6",
+    "WG7_ISBA": "SWC_7",
+    "WG8_ISBA": "SWC_8",
+    "TG1_ISBA": "TS_1",
+    "TG2_ISBA": "TS_2",
+    "TG3_ISBA": "TS_3",
+    "TG4_ISBA": "TS_4",
+    "TG5_ISBA": "TS_5",
+    "TG6_ISBA": "TS_6",
+    "TG7_ISBA": "TS_7",
+    "TG8_ISBA": "TS_8",
+    "LWU_ISBA": "LW_OUT",
+    "LWD_ISBA": "LW_IN",
+    "SWU_ISBA": "SW_OUT",
+    "SWD_ISBA": "SW_IN"
 }
 
