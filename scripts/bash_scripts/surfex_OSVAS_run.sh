@@ -121,13 +121,20 @@ fi
 year=$(date -d "$run_start" +%Y)
 month=$(date -d "$run_start" +%-m)
 day=$(date -d "$run_start" +%-d)
-hour=$(date -d "$run_start + 3600 seconds" +%-H)
+# normalize and get start epoch
+start_epoch=$(date -d "$run_start" +%s)
+# add 3600 seconds safely
+epoch_plus=$(( start_epoch + 3600 ))
+# compute seconds since midnight of that same date
+midnight_epoch=$(date -d "$(date -d "$run_start" +%Y-%m-%d) 00:00:00" +%s)
+seconds_since_midnight=$(( epoch_plus - midnight_epoch ))
+echo "$seconds_since_midnight"
 
 # Update OPTIONS.nam
 sed -i "s/NYEAR *= *[0-9]\+,/NYEAR  = ${year},/" "$namelist"
 sed -i "s/NMONTH *= *[0-9]\+,/NMONTH = ${month},/" "$namelist"
 sed -i "s/NDAY *= *[0-9]\+,/NDAY   = ${day},/" "$namelist"
-sed -i "s/XTIME *= *[0-9.]\+/XTIME  = ${hour}./" "$namelist"
+sed -i "s/XTIME *= *[0-9.]\+/XTIME  = ${seconds_since_midnight}./" "$namelist"
 
 echo "✔ OPTIONS.nam updated from run_start = $run_start"
 
