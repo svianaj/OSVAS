@@ -46,6 +46,7 @@ def create_fc_table(conn, param_name, experiment_name):
         CREATE TABLE FC (
             fcst_dttm DOUBLE,
             lead_time DOUBLE,
+            z INT,
             SID INT,
             lat DOUBLE,
             lon DOUBLE,
@@ -70,6 +71,10 @@ def process_netcdf_file(ncfile, param_dict, SID, z, lat, lon, experiment_name, o
 
         time_var = ds.variables["time"]
         times = netCDF4.num2date(time_var[:], time_var.units, only_use_cftime_datetimes=False)
+
+        # Ensure all times are treated as UTC (avoid local-time shift)
+        if times[0].tzinfo is None:
+           times = [t.replace(tzinfo=timezone.utc) for t in times]
 
         for var_name, output_name in param_dict.items():
             if var_name not in ds.variables:
@@ -100,12 +105,14 @@ def process_netcdf_file(ncfile, param_dict, SID, z, lat, lon, experiment_name, o
                         continue
 
                     valid_dt = times[i]
+                    if valid_dt.tzinfo is None:
+                        valid_dt = valid_dt.replace(tzinfo=timezone.utc)
                     valid_time = int(valid_dt.timestamp())
-
-                    # Forecast time = valid time truncated to the day
-                    fcst_dt = datetime(valid_dt.year, valid_dt.month, valid_dt.day)
+                    
+                    # Forecast time = valid time truncated to the day (keep it UTC-aware)
+                    fcst_dt = datetime(valid_dt.year, valid_dt.month, valid_dt.day, tzinfo=timezone.utc)
                     fcst_time = int(fcst_dt.timestamp())
-
+                    
                     # Lead time = difference in hours from beginning of the day
                     lead_time = (valid_dt - fcst_dt).total_seconds() / 3600.0
 
@@ -128,10 +135,11 @@ def process_netcdf_file(ncfile, param_dict, SID, z, lat, lon, experiment_name, o
                         cursor = conn.cursor()
 
                     cursor.execute(f"""
-                        INSERT INTO FC VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                        INSERT INTO FC VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                     """, (
                         fcst_time,
                         lead_time,
+                        z,
                         SID,
                         lat,
                         lon,
