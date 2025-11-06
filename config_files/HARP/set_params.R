@@ -247,16 +247,12 @@ params <- list(
     ),
     H = list(
       thresholds = c(seq(-25, 25, 5)),
-      scale_fcst = list(scaling = 1, new_units = "W/m", mult = TRUE),
-      scale_obs  = list(scaling = 1, new_units = "W/m", mult = TRUE),
       obsmin_val=-50,
       obsmin_val=50,
       error_sd   = 6
     ),
     LE = list(
       thresholds = c(seq(-25, 25, 5)),
-      scale_fcst = list(scaling = 1, new_units = "W/m", mult = TRUE),
-      scale_obs  = list(scaling = 1, new_units = "W/m", mult = TRUE),
       obsmin_val = -50,
       obsmax_val = 50,
       error_sd   = 6

@@ -25,10 +25,10 @@ FORCING_NOTEBOOK=${OSVAS}/scripts/notebooks/Write_ICOS_forcing.ipynb
 VALIDATION_NOTEBOOK=${OSVAS}/scripts/notebooks/ICOS_Flux_Downloader.ipynb
 # Run the notebook from this bash script using nbconvert 
 # The script reads the yaml config in ${OSVAS}/config_files/Stations/{STATION_NAME.yml}
-#jupyter nbconvert --to notebook --execute --inplace $VALIDATION_NOTEBOOK #--stdout
+jupyter nbconvert --to notebook --execute --inplace $VALIDATION_NOTEBOOK #--stdout
 
 
-
+exit
 #### STEP 3: CONFIGURE AND RUN THE SIMULATIONS #####################################################
 ####################################################################################################
 
@@ -56,13 +56,14 @@ source $SURFEXPROFILE
 echo $PATH
 which OFFLINE
 
-#It is assumed that there are working namelists for a number of EXPs in 
-#$OSVAS/namelists/$STATION_NAME/OPTIONS.nam_${EXP}
-#And forcings should have been created in $OSVAS_HOME/forcings/$STATION_NAME/ by step 1.
+#### It is assumed that there are working OPTIONS.nam namelists for a number of EXPs in 
+#### $OSVAS/namelists/$STATION_NAME/OPTIONS.nam_${EXP}
+#### And forcings should have been created in $OSVAS_HOME/forcings/$STATION_NAME/ by step 1.
 
 #Loop through the defined EXPNAMES, make experiment directories,
 #make physiography copy the corresponding namelists, run the offline experiment:
-for EXPNAME in MEBREFOL; do
+EXPNAMES="MEBREFOL"
+for EXPNAME in $EXPNAMES; do
 	mkdir -p $OSVAS/RUNS/$STATION_NAME/$EXPNAME/run/
 	mkdir -p $OSVAS/RUNS/$STATION_NAME/$EXPNAME/output/
 
@@ -125,13 +126,13 @@ for EXPNAME in MEBREFOL; do
 	PREP
 	OFFLINE
 	#Move output files to the output folder of the experiment
-	cp PGD.nc $OUTDIR
-	cp PREP.nc $OUTDIR
-	cp SURFOUT*.nc $OUTDIR
-	cp OPTIONS.nam $OUTDIR
-	cp *OUT.nc $OUTDIR
-	cp LISTI* $OUTDIR
-	cp Param* $OUTDIR
+	mv PGD.nc $OUTDIR
+	mv PREP.nc $OUTDIR
+	mv SURFOUT*.nc $OUTDIR
+	mv OPTIONS.nam $OUTDIR
+	mv *OUT.nc $OUTDIR
+	mv LISTI* $OUTDIR
+	mv Param* $OUTDIR
 
 #####################################################################################################
 ############ STEP 4: For each experiment, extract aselection of variables   #########################
@@ -142,3 +143,12 @@ for EXPNAME in MEBREFOL; do
 
 #end loop
 done
+
+
+#####################################################################################################
+############ STEP 5: Configure a HARP yaml file to be used by oper-harp-verif   #####################
+############ to run a HARP point verification for the runs                  #########################
+#####################################################################################################
+
+
+

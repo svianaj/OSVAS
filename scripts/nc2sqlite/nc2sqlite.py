@@ -10,6 +10,7 @@ from pathlib import Path
 import csv
 import sys
 import traceback
+
 def parse_args():
     parser = argparse.ArgumentParser(description="Convert point NetCDF SURFEX output to SQLite.")
     parser.add_argument("-p", "--param_list", required=True, help="Path to param_list.json")
@@ -58,10 +59,7 @@ def create_fc_table(conn, param_name, experiment_name):
     """)
     conn.commit()
 
-from datetime import datetime, timedelta
-import netCDF4
-import sqlite3
-from pathlib import Path
+
 
 def process_netcdf_file(ncfile, param_dict, SID, z, lat, lon, experiment_name, output_base):
     with netCDF4.Dataset(ncfile) as ds:
