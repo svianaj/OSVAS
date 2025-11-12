@@ -1,17 +1,20 @@
 # OSVAS
 ## Offline Surfex Validation System
 
-OSVAS is a set of scripts and namelists developed within the ACCORD community to provide a systematic approach for testing NWP-like SURFEX settings over specialized Atmospheric & Ecosystem stations from the ICOS project. It also facilitates validation of results using flux data from the same source.
+OSVAS is a set of scripts developed within the ACCORD community to provide a systematic approach for testing NWP-like SURFEX settings over specialized Atmospheric & Ecosystem stations from the ICOS project. It also facilitates validation of results using flux data from the same source.
 
 ## Installation
 ### Conda Environment
   It is advised to install the needed python packages as a conda environment.
   If conda is not installed in your system:
-  ```wget https://repo.anaconda.com/archive/Anaconda3-latest-Linux-x86_64.sh
+  ```
+  wget https://repo.anaconda.com/archive/Anaconda3-latest-Linux-x86_64.sh
   bash Anaconda3-latest-Linux-x86_64.sh
   ```
-  Activate the base conda environment or load its module (e.g. module load conda/24.11.3-2 on ATOS)
-  Then, run the script create_conda_environment.sh to install the software
+  - Activate the base conda environment or load its module (e.g. module load conda/24.11.3-2 on ATOS).
+  - Then, run the script create_conda_environment.sh to install the dependencies. These include a specific yaml handling library for bash linux (yq, Go version from conda-forge and a number of python packages
+  - For running the verification step, a functional HARP installation must be done & oper-harp-verif scripts downloaded from the repo.
+  - Activate the conda environment to start using OSVAS.
 
 ### Running Simulations
 - All the steps of the system are run from a bash script for linux ( surfex_OSVAS_run_linux.sh ) or ATOS systems (surfex_OSVAS_run_atos.sh) , 
