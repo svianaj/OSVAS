@@ -4,20 +4,23 @@
 OSVAS is a set of scripts and namelists developed within the ACCORD community to provide a systematic approach for testing NWP-like SURFEX settings over specialized Atmospheric & Ecosystem stations from the ICOS project. It also facilitates validation of results using flux data from the same source.
 
 ## Installation
-### Python Environment
-- The required Python packages are listed in `requirements.txt`.
-- Install using:
-  ```sh
-  pip install -r requirements.txt
+### Conda Environment
+  It is advised to install the needed python packages as a conda environment.
+  If conda is not installed in your system:
+  ```wget https://repo.anaconda.com/archive/Anaconda3-latest-Linux-x86_64.sh
+  bash Anaconda3-latest-Linux-x86_64.sh
   ```
+  Activate the base conda environment or load its module (e.g. module load conda/24.11.3-2 on ATOS)
+  Then, run the script create_conda_environment.sh to install the software
 
 ### Running Simulations
+- All the steps of the system are run from a bash script for linux ( surfex_OSVAS_run_linux.sh ) or ATOS systems (surfex_OSVAS_run_atos.sh) , 
 - A functional **SURFEX installation** is required.
-- Ensure SURFEX is correctly referenced in `surfex_OSVAS_run.sh`.
+- Ensure SURFEX is correctly referenced in the bash script.
   
-## Features
+## Steps of the OSVAS workflow:
 
-### 1. Forcing Data Preparation
+### 1. Preparation of forcing data 
 - A Python notebook (`Write_ICOS_forcing.ipynb`) allows users to:
   - Select different ICOS stations.
   - Generate SURFEX forcing files in ASCII or NetCDF format for simulations.
@@ -28,17 +31,7 @@ OSVAS is a set of scripts and namelists developed within the ACCORD community to
   - **NetCDF format**: Daily NetCDF files are created, with a merging function available in the notebook to join daily files in a single FORCING.nc file
 - **Lockfile mechanism**: Prevents overwriting of forcing files unless manually deleted.
 
-### 2. Simulation Execution
-- `surfex_OSVAS_run.sh`: A bash script to manage simulation runs over the selected station using the generated forcing files, organize model output in different folders, etc. 
-
-### 3. SURFEX Namelists
-- A set of SURFEX namelists tailored for each site, testing advanced SURFEX physics configurations:
-  - **3 patches, MEB, DIF, 3-layer snow model**.
-- Two versions of each namelist:
-  1. **Self-contained**: Uses physiographic data derived from station metadata, without external dependencies.
-  2. **NWP-like conditions**: Uses the same physiographic datasets as operational NWP runs. This can be achieved by running PGD for every site on ATOS, BELENOS, etc (where all phisiographic files are available) and extracting the PGD values to the namelist, or simply run all simulations (PGD-PREP-OFFLINE) under those HPCs.
-
-### 4. Download of Validation data from ICOS specialized stations.
+### 2. Download validation data from ICOS specialized stations.
 The jupyter notebook `ICOS_Flux_downloader.ipynb` retrieves the data and saves it as OBSTABLE sqlite files, which can be used by HARP, custom-made verification scripts or other validation tools. Info about the ICOS dataset(s) from where to extract the validation variables must be included in the "Validation_data" section of the yaml files. The sampling frequency, how to rename the ICOS variables in the sqlite file and the validation period must also be specified. Stations are identified with a Station ID (SID), making possible to write the validation data to a common obstable for all stations. This is controlled by common_obstable key in the yaml file (see example below)
 
 ### Example of yaml config file for "Meteopole" station and syntax (read comments for details)
@@ -108,7 +101,23 @@ Validation_data:
 ```
 The configuration file above will be treated by `Write_ICOS_forcing.ipynb` to generate forcing files in ascci or netcdf format according to the defined datasets and transformations, and by `ICOS_Flux_downloader.ipynb` to generate a validation dataset from the different ICOS datasets specified in the Validation_data block. In both cases, if several datasets with different sampling rates are provided, the data will be upsampled to a common (smallest) timedelta.
 
-### 5. Convert SURFEX OFFLINE output data from ncfile to sqlite FCTABLES, for use in HARP.
+### 3. Simulation Execution
+- `surfex_OSVAS_run.sh`: A bash script to manage simulation runs over the selected station using the generated forcing files, organize model output in different folders, etc. 
+
+### 3. SURFEX Namelists
+- A set of SURFEX namelists tailored for each site, testing advanced SURFEX physics configurations:
+  - **3 patches, MEB, DIF, 3-layer snow model**.
+- Two versions of each namelist:
+  1. **Self-contained**: Uses physiographic data derived from station metadata, without external dependencies.
+  2. **NWP-like conditions**: Uses the same physiographic datasets as operational NWP runs. This can be achieved by running PGD for every site on ATOS, BELENOS, etc (where all phisiographic files are available) and extracting the PGD values to the namelist, or simply run all simulations (PGD-PREP-OFFLINE) under those HPCs.
+
+
+
+
+### 5. Define the station and experiments (namelists) to test and run the SURFEX OFFLINE steps
+This is controlled by 
+
+### 6. Convert SURFEX OFFLINE output data from ncfile to sqlite FCTABLES, for use in HARP.
 
 Similarly to [grib2sqlite](https://github.com/destination-earth-digital-twins/grib2sqlite) utility, a new python tool has been created here to help extract SURFEX output variables from single-point OFFLINE SURFEX RUNS into FCTABLES suitable for use with HarPoint / [oper-harp-verif](https://github.com/harphub/oper-harp-verif) , or with other custom made verification software capable to read observations & simulation data from sqlite files. This tool needs a dictionary of SURFEX variable names to observation variable names (i.e. variable names present in the OBSTABLES files to be used for the validation). In order to use oper-harp-verif, these observation variable names should also be properly defined in file set_params.R from this set of scripts. In the future, nc2sqlite tool could be extended to allow data extraction from 2-D SURFEX offline runs, i.e. through interpolation from the NetCDF grid.
 

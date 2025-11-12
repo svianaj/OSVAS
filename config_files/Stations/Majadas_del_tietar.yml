@@ -1,3 +1,16 @@
+OSVAS_steps:
+ Create_forcing: false
+ Get_validation: false
+ Run_surfex: True
+ Surfex_steps: #Don't forget a space before each item
+  - pgd
+  - PREP
+  - OFFLINE
+ Expnames: #Don't forget a space before each item
+  - MEBREFOL
+ Extract_model_sqlites: True
+ Run_HARP: True
+
 Station_metadata:
   Station_name: Majadas_del_tietar
   SID: 4300000005
