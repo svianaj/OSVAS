@@ -58,8 +58,8 @@
 /
 &NAM_ZS                XUNIF_ZS  = 150.
 /
-&NAM_PREP_SURF_ATM NYEAR  = 2017,
-                   NMONTH = 01,
+&NAM_PREP_SURF_ATM NYEAR  = 2021,
+                   NMONTH = 05,
                    NDAY   = 01,
                    XTIME  = 0.  
 /
