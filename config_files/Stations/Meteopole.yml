@@ -1,15 +1,15 @@
 OSVAS_steps:
- Create_forcing: false
- Get_validation: false
+ Create_forcing: False
+ Get_validation: False
  Run_surfex: True
  Surfex_steps: #Don't forget a space before each item
   - pgd
   - PREP
   - OFFLINE
  Expnames: #Don't forget a space before each item
-  - MEBREFOL
- Extract_model_sqlites: True
- Run_HARP: True
+  - MEB_REFBNR
+ Extract_model_sqlites: False
+ Run_HARP: False
 
 Station_metadata:
   Station_name: Meteopole
@@ -23,9 +23,9 @@ Station_metadata:
 Forcing_data:
   height_T: 2                       # Height of the temperature measurement
   height_V: 10                      # Height of the windspeed   measurement
-  run_start: '2021-4-30 23:00:00'    # Timestamp for the forcing start
-  run_end: '2022-7-1 00:00:00'      # Timestamp for the forcing end
-  forcing_format: 'netcdf'          # Choose between netcdf or ascii
+  run_start: '2021-01-01 00:00:00'    # Timestamp for the forcing start
+  run_end: '2022-01-01 00:00:00'      # Timestamp for the forcing end
+  forcing_format: 'ascii'          # Choose between netcdf or ascii
   dataset1:
     doi: https://meta.icos-cp.eu/objects/VIoR-cJnMUUjbaEkuNHMKgSv
     timedelta: 30  # in minutes
@@ -43,8 +43,8 @@ Forcing_data:
       Forc_TA: TA, +273.15
       Forc_RH: RH
 Validation_data:
-  validation_start: '2021-1-30 23:00:00'
-  validation_end: '2022-12-1 00:00:00'
+  validation_start: '2021-01-01 00:00:00'
+  validation_end: '2022-01-01 00:00:00'
   common_obstable: TRUE
   dataset1: 
     doi: https://meta.icos-cp.eu/objects/VIoR-cJnMUUjbaEkuNHMKgSv
@@ -89,8 +89,6 @@ Validation_data:
       LE: LE_F_MDS
       VPD: VPD_F
       NEE: NEE_VUT_REF
-      H: H
-      LE: LE
     units:
       H: W/m2
       LE: W/m2

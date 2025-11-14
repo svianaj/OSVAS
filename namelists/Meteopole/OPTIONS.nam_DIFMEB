@@ -1,6 +1,5 @@
 &NAM_CH_ISBAn          CCH_DRY_DEP = "WES89 "
 /
-
 &NAM_COVER 	       YCOVER = 'ECOCLIMAP_II_EUROP_V2.2',
 		       YCOVERFILETYPE = 'DIRECT' ,
 		       XRM_COVER = 0.01
@@ -316,15 +315,13 @@
                        LSURF_VARS   = F      ,
 		       LSURF_BUDGETC = F
 /
-
-&NAM_FRAC
-                       LECOCLIMAP   = T,
+&NAM_FRAC              LECOCLIMAP   = T,
                        XUNIF_SEA    = 0.,
                        XUNIF_WATER  = 0.,
                        XUNIF_TOWN   = 0.,
                        XUNIF_NATURE = 1.
-/
 
+/
 &NAM_IO_OFFLINE        LPRINT  = T                       ,
                        CFORCING_FILETYPE =    'ASCII '   ,
                        CSURF_FILETYPE =       'ASCII '   ,
@@ -340,11 +337,11 @@
 	               XUNIF_WDRAIN  = 0.000         ,
                        CPEDO_FUNCTION= 'CH78'        ,
                        CALBEDO       = 'DRY'         ,
-                       CISBA         = 'DIF'         ,
+                       CISBA         = 'DIF' ,
                        CPHOTO        = 'AST'         ,
                        LTR_ML        = .true.        ,
                        NPATCH        = 12            ,
-	               LMEB          = .true.        ,
+                       LMEB=.TRUE.,
 		       NGROUND_LAYER = 24            ,
 		       XSOILGRID     = 0.005,0.02,0.04,0.06,0.08,0.12,0.16,0.25,0.35,0.45,0.55,0.65,0.75,0.85,0.95,1.08,1.3,1.5,1.7,1.9,2.1,2.4,3.5,5.0
 /
