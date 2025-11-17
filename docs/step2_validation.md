@@ -1,4 +1,4 @@
-### Step 2. Download validation data from ICOS specialized stations.
+## Step 2. Download validation data from ICOS specialized stations.
 The jupyter notebook `ICOS_Flux_downloader.ipynb`, also  run from inside the bash script, retrieves the validation data and saves it as OBSTABLE sqlite files, which can be used by HARP, custom-made verification scripts or other validation tools. Info about the ICOS dataset(s) from where to extract the validation variables must be included in the "Validation_data" section of the yaml files. The sampling frequency, how to rename the ICOS variables in the sqlite file and the validation period must also be specified. Stations are identified with a Station ID (SID), making possible to write the validation data to a common obstable for all stations. This is controlled by common_obstable key in the yaml file (see example below)
 ```
 Validation_data:
