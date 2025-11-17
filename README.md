@@ -1,4 +1,4 @@
-  # OSVAS
+# OSVAS
 ## Offline Surfex Validation System
 
 OSVAS is a set of scripts developed within the ACCORD community to provide a systematic approach for testing NWP-like SURFEX settings over specialized Atmospheric & Ecosystem stations from the ICOS project. It also facilitates validation of results using flux data from the same source.
@@ -36,14 +36,20 @@ cd scripts/bash_scripts
 ```
 conda env activate OSVASENV
 ```
-### The OSVAS Workflow
-- Currently, all the steps of the OSVAS system are run from a bash script for linux ( surfex_OSVAS_run_linux.sh ) or ATOS systems (surfex_OSVAS_run_atos.sh). The script reads a .yaml file specific to every ICOS station where one can define what OSVAS steps to run for the station, what ICOS datasets read for forcing and validation, start and end periods for the run and for the validation, what SURFEX steps to run, names of the SURFEX OFFLINE experiments to run, etc.
-- A functional **SURFEX installation** is required.
-- Currently, the bash script must be edited only to specify the name of the ICOS station, locate the OSVAS and HARP paths, and make sure that SURFEX profile and binaries are correctly referenced:
+### SURFEX
+- A functional **SURFEX installation** is required, and the namelist to run it must of course be compatible with this version: Here are a few suggestions:
+    - Opensurfex8.1 https://www.umr-cnrm.fr/surfex/spip.php?article387
+    - ACCORD's SURFEX_NWP: https://github.com/ACCORD-NWP/SURFEX-NWP
+### ICOS login & token
+In order to download ICOS data from their python API, it is necessary to create an account there, login and get an access token which must be stored in $OSVAS/icos_cookie.txt . This cookie must be renewed every 27.8h (10⁵  seconds). Follow instructions in https://cpauth.icos-cp.eu/login/ . After logging in, you'll find your token at the bottom of your user profile info.
+## The OSVAS Workfow
+### OSVAS's central control script
+- Currently, all the steps of the OSVAS system are run from a bash script, with versions available for general linux ( surfex_OSVAS_run_linux.sh ) or for the ATOS HPC (surfex_OSVAS_run_atos.sh). The script reads the file $OSVAS/config_files/Stations/${STATION_NAME}.yml created for every used ICOS station, where one can define what OSVAS steps to run for the station, what ICOS datasets read for forcing and validation, start and end periods for the run and for the validation, what SURFEX steps to run, names of the SURFEX OFFLINE experiments to run, etc.
+- This bash script needs to be edited only to specify the name of the ICOS station, locate the OSVAS and HARP paths, and make sure that SURFEX profile and binaries are correctly referenced:
 ```
 export STATION_NAME=Majadas_del_tietar
-export OSVAS=/home/pn56/OSVASgh/ #SET PATH TO YOUR OSVAS SETUP
-export HARP=/home/pn56/operharpverif/  #SET PATH TO HARP SCRIPTS
+export OSVAS=$HOME/OSVASgh/ #SET PATH TO YOUR OSVAS SETUP
+export HARP=$HOME/operharpverif/  #SET PATH TO HARP SCRIPTS
 (....)
 # Define path of SURFEX code and SURFEX executables, add to $PATH
 SURFEX_PARENT=$HOME
@@ -73,88 +79,100 @@ ECOSG_COVERS=$ECOSG_DATA_PATH/COVER
 GMTED_PATH=/ec/res4/scratch/sp3c/hm_home/harmonie46h111/climate/DKCOEXP/
 SOILGRIDS_PATH=/ec/res4/scratch/sp3c/hm_home/harmonie46h111/climate/DKCOEXP/
 ```
-## Steps of the OSVAS workflow:
-
-### 1. Preparation of forcing data 
-- A Python notebook (`Write_ICOS_forcing.ipynb`) allows users to:
-  - Select different ICOS stations.
-  - Generate SURFEX forcing files in ASCII or NetCDF format for simulations.
-- Yaml config files by station are used to specify the ICOS datasets to extract the forcing, variables to read, unit transformations, simulation periods, etc.
-- Example config files currently available for stations: **Majadas_del_tietar (ES), Meteopole (FR), and Loobos (NL)** (Fluxnet data format, accessible via ICOS Data Portal).
-- Available formats:
-  - **ASCII format**: Forcings are generated for the entire simulation period.
-  - **NetCDF format**: Daily NetCDF files are created, with a merging function available in the notebook to join daily files in a single FORCING.nc file
-- **Lockfile mechanism**: Prevents overwriting of forcing files unless manually deleted.
-
-### 2. Download validation data from ICOS specialized stations.
-The jupyter notebook `ICOS_Flux_downloader.ipynb` retrieves the data and saves it as OBSTABLE sqlite files, which can be used by HARP, custom-made verification scripts or other validation tools. Info about the ICOS dataset(s) from where to extract the validation variables must be included in the "Validation_data" section of the yaml files. The sampling frequency, how to rename the ICOS variables in the sqlite file and the validation period must also be specified. Stations are identified with a Station ID (SID), making possible to write the validation data to a common obstable for all stations. This is controlled by common_obstable key in the yaml file (see example below)
-
-### Example of yaml config file for "Meteopole" station and syntax (read comments for details)
+### Step 0: Define Station and relevant paths, read which steps to run from the yaml file
+- Make sure that you have the yaml file in the correct location (yaml_file="$OSVAS/config_files/Stations/${STATION_NAME}.yml")
+- Read the yaml configuration file, find out which OSVAS & SURFEX steps to need to be run, and the names of the experiments assigned to each namelist to test
+- Make sure that you have the namelist file in the correct location (yaml_file="$OSVAS/namelists/Stations/{STATION_NAME}/OPTIONS.nam_{EXPNAME}")
 ```
-Station_metadata:
-  Station_name: Meteopole
-  SID: 4300000006
-  elev: 158
-  lat: 43.572857
-  lon: 1.37474
-  vegtype: 10
-  lai: 1.85,1.50,1.72,2.35,2.15,1.37,1.3,1.25,1.37,1.45,1.3,1.25
-  closure_type: 1 # 1 for instantaneous BR closure, 2 for daily BR closure, 3 & 4 for inclusion of canopy storage
-                  # (more details in ICOS_Flux_downloader jupyter notebook
-
+OSVAS_steps:
+ Create_forcing: true
+ Get_validation: true
+ Run_surfex: True
+ Surfex_steps: #Don't forget a space before each item
+  - pgd
+  - PREP
+  - OFFLINE
+ Expnames: #Don't forget a space before each EXPNAME
+  - MEBREFOL
+ Extract_model_sqlites: true
+ Run_HARP: true
+ Display_HARP: true
+```
+### Step 1. Preparation of forcing data 
+- A Python notebook (`Write_ICOS_forcing.ipynb`) is run from inside the bash script, making use of "jupyter nbconvert --to notebook" utility. It generates SURFEX forcing files in ASCII or NetCDF format for running the offline SURFEX simulations.
+- Section Forcing_data in the yml config file is used to specify from what ICOS datasets to extract the forcing, what variables to read, unit transformations, simulation periods, etc:
+``` 
 Forcing_data:
   height_T: 2                       # Height of the temperature measurement
   height_V: 10                      # Height of the windspeed   measurement
-  run_start: '2021-4-30 23:00:00'    # Timestamp for the forcing start
-  run_end: '2022-7-1 00:00:00'      # Timestamp for the forcing end
-  forcing_format: 'netcdf'          # Choose between netcdf or ascii
-  dataset1:  # Define as many datasets as needed if a single dataset doesn't contain all the forcing variables
-    doi: https://meta.icos-cp.eu/objects/VIoR-cJnMUUjbaEkuNHMKgSv
-    timedelta: 30  # Sampling frequency of the dataset (in minutes)
+  run_start: '2021-5-01 00:00:00'    # Timestamp for the forcing start
+  run_end: '2021-7-1 23:30:00'      # Timestamp for the forcing end
+  forcing_format: 'ascii'          # Choose between netcdf or ascii
+  dataset1:
+    doi: https://meta.icos-cp.eu/objects/fPAqntOb1uiTQ2KI1NS1CHlB
+    timedelta: 30  # in minutes
     variables:
-      Forc_CO2: -, 0.00062 # Define pairs {variable,transformation}. This will lead to constant CO2.
-      Forc_PS: PA, *1000   # This will multiply PA by 1000 to get Forc_PS in Pa
-      Forc_RAIN: P, /(timedelta*60)   # This will transform from precipitation to precipitation rate.
-      Forc_SNOW:    # Any non-filled variable will result in a forcing variable full of zeroes.
+      Forc_CO2: -, 0.00062
+      Forc_PS: PA, *1000
+      Forc_RAIN: P, /(timedelta*60)
+      Forc_SNOW:
       Forc_WIND: WS
-      Forc_DIR: WD      
+      Forc_DIR: WD
       Forc_DIR_SW: SW_IN
       Forc_LW: LW_IN
-      Forc_QA: # If no variable for Forc_QA is available, the script will try to get it from Forc_RH or VPD.
-      Forc_SCA_SW: 
-      Forc_TA: TA, +273.15   # Transform to Kelvin
+      Forc_QA:
+      Forc_SCA_SW:
+      Forc_TA: TA, +273.15
       Forc_RH: RH
+``` 
+- Example config files currently available for stations: **Majadas_del_tietar (ES), Meteopole (FR), and Loobos (NL)** (Fluxnet data format, accessible via ICOS Data Portal).
+- Available formats:
+  - **ASCII format**: Forcings are generated for the entire simulation period.
+  - **NetCDF format**: Daily NetCDF files are created, then a merging function in the notebook is used to join daily files in a single FORCING.nc file
+- **Sampling rate**: If several datasets with different sampling rates are provided, the data will be upsampled to a common (smallest) timedelta.
+- **Lockfile mechanism**: Prevents overwriting of forcing files unless manually deleted.
+
+### Step 2. Download validation data from ICOS specialized stations.
+The jupyter notebook `ICOS_Flux_downloader.ipynb`, also  run from inside the bash script, retrieves the validation data and saves it as OBSTABLE sqlite files, which can be used by HARP, custom-made verification scripts or other validation tools. Info about the ICOS dataset(s) from where to extract the validation variables must be included in the "Validation_data" section of the yaml files. The sampling frequency, how to rename the ICOS variables in the sqlite file and the validation period must also be specified. Stations are identified with a Station ID (SID), making possible to write the validation data to a common obstable for all stations. This is controlled by common_obstable key in the yaml file (see example below)
+```
 Validation_data:
-  validation_start: '2021-4-30 23:00:00'
-  validation_end: '2022-7-1 00:00:00'
-  common_obstable: TRUE  # Write obs to a common obstable or to a single-station one
-  dataset1: 
-    doi: https://meta.icos-cp.eu/objects/VIoR-cJnMUUjbaEkuNHMKgSv
+  validation_start: '2021-5-01 00:00:00'
+  validation_end: '2021-7-1 23:30:00'
+  common_obstable: FALSE  # Write obs to a common obstable or to a single-station one
+  dataset1:
+    doi: https://meta.icos-cp.eu/objects/fPAqntOb1uiTQ2KI1NS1CHlB
     timedelta: 30
     variables:
       SW_OUT: SW_OUT
       LW_OUT: LW_OUT
+      SW_IN: SW_IN
+      LW_IN: LW_IN
       TS_1: TS_1
       TS_2: TS_2
-      TS_3: TS_3
-      TS_4: TS_4
-      TS_5: TS_5
       SWC_1: SWC_1
       SWC_2: SWC_2
-      SWC_3: SWC_3
-      SWC_4: SWC_4
-      SWC_5: SWC_5
-      G: G
-  dataset2: 
-    doi: https://meta.icos-cp.eu/objects/No7s1uuHhY2frqKUg6CSIRV-
+    units:  # These should be similar to units attribute in output netcdf files
+      SW_OUT: W/m2
+      LW_OUT: W/m2
+      LW_IN: W/m2
+      SW_IN: W/m2
+      TS_1: K
+      TS_2: K
+      SWC_1: m3/m3
+      SWC_2: m3/m3
+  dataset2:
+    doi: https://meta.icos-cp.eu/objects/tONKGY9pOYqVInayCYac-4LI
     timedelta: 30
     variables:
-     H: H_F_MDS
-     LE: LE_F_MDS
-     VPD: VPD_F
-     NEE: NEE_VUT_REF
+      H: H
+      LE: LE
+    units:
+      H: W/m2
+      LE: W/m2
 ```
-The configuration file above will be treated by `Write_ICOS_forcing.ipynb` to generate forcing files in ascci or netcdf format according to the defined datasets and transformations, and by `ICOS_Flux_downloader.ipynb` to generate a validation dataset from the different ICOS datasets specified in the Validation_data block. In both cases, if several datasets with different sampling rates are provided, the data will be upsampled to a common (smallest) timedelta.
+- The configuration file above will be treated by `Write_ICOS_forcing.ipynb` to generate forcing files in ascci or netcdf format according to the defined datasets and transformations, and by `ICOS_Flux_downloader.ipynb` to generate a validation dataset from the different ICOS datasets specified in the Validation_data block. 
+- **Sampling rate**: If several datasets with different sampling rates are provided, the data will be upsampled to a common (smallest) timedelta.
+
 
 ### 3. Simulation Execution
 - `surfex_OSVAS_run.sh`: A bash script to manage simulation runs over the selected station using the generated forcing files, organize model output in different folders, etc. 
