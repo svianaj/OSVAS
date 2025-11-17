@@ -1,4 +1,4 @@
-### Step 3: Configure and run the simulations
+## Step 3: Configure and run the simulations
 In this part, for every EXPNAME defined in Expnames:
 -  A directory for running the experiment is created in $OSVAS/RUNS/$STATION_NAME/$EXPNAME/run/
 -  Forcing and physiographic files are linked in the execution directory
