@@ -1,5 +1,5 @@
-### Step 4: Sqlite extraction of model data
-#### The nc2sqlite tool
+## Step 4: Sqlite extraction of model data
+### The nc2sqlite tool
 Similarly to [grib2sqlite](https://github.com/destination-earth-digital-twins/grib2sqlite) utility, a new python tool has been created here to help extract SURFEX output variables from single-point OFFLINE SURFEX RUNS into FCTABLES suitable for use with HarPoint / [oper-harp-verif](https://github.com/harphub/oper-harp-verif) , or with other custom made verification software capable to read observations & simulation data from sqlite files. This tool needs a dictionary of SURFEX variable names to observation variable names (i.e. variable names present in the OBSTABLES files to be used for the validation). In order to use oper-harp-verif, these observation variable names should also be properly defined in file set_params.R from this set of scripts. In the future, nc2sqlite tool could be extended to allow data extraction from 2-D SURFEX offline runs, i.e. through interpolation from the NetCDF grid.
 
 ```
@@ -26,7 +26,7 @@ options:
   -m EXPERIMENT_NAME, --experiment_name EXPERIMENT_NAME
                         Experiment name
 ```
-#### Usage of nc2sqlite.py in OSVAS's workflow
+### Usage of nc2sqlite.py in OSVAS's workflow
 For each experiment, it extract a selection of variables defined in $OSVAS/scripts/nc2sqlite/param_list.json to FCTABLES* files in sqlite format. Make sure that your ICOS Station is included in $OSVAS/sqlites/station_list_SURFEX.csv with the same metadata as in the Station_metadata block of the yml file:
 ``` 
 Station_metadata:
