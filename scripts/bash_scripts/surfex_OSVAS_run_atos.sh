@@ -228,11 +228,21 @@ fi
 ############ STEP 5: Configure a HARP yaml file to be used by oper-harp-verif   #####################
 ############ to run a HARP point verification for the runs                  #########################
 #####################################################################################################
+HARPCONFIG_yml_template="$OSVAS/config_files/HARP/OSVAS_HARP_verif.yml"
+HARPCONFIG_yml="$OSVAS/config_files/HARP/OSVAS_HARP_verif_${STATION_NAME}.yml"
+validation_start=$(yq '.Validation_data.validation_start' "$yaml_file" | tr -d "'\"")
+validation_end=$(yq '.Validation_data.validation_end' "$yaml_file" | tr -d "'\"")
+# Parse with 'date' to normalize
+year_start=$(date -d "$validation_start" +%Y)
+month_start=$(date -d "$validation_start" +%m)
+day_start=$(date -d "$validation_start" +%d)
+	
+# Parse with 'date' to normalize
+year_end=$(date -d "$validation_end" +%Y)
+month_end=$(date -d "$validation_end" +%m)
+day_end=$(date -d "$validation_end" +%d)
 if [[ "$Run_HARP" == true ]]; then
     echo "▶ Running Step 5: HARP verification"
-
-    HARPCONFIG_yml_template="$OSVAS/config_files/HARP/OSVAS_HARP_verif.yml"
-    HARPCONFIG_yml="$OSVAS/config_files/HARP/OSVAS_HARP_verif_${STATION_NAME}.yml"
     cp "$HARPCONFIG_yml_template" "$HARPCONFIG_yml"
 
     # Update with yq — use single quotes for the yq script and inject variables safely
@@ -258,7 +268,7 @@ if [[ "$Run_HARP" == true ]]; then
       -start_date "${year_start}${month_start}${day_start}" \
       -end_date   "${year_end}${month_end}${day_end}" \
       -config_file "$HARPCONFIG_yml" \
-      -params_file "/home/pn56/OSVASgh/config_files/HARP/set_params.R" \
+      -params_file "${OSVAS}/config_files/HARP/set_params.R" \
       -params_list=H,LE
 
 else
@@ -270,9 +280,9 @@ fi
 #####################################################################################################
 if [[ "$Display_HARP" == true ]]; then
     echo "▶ Running Step 6: Display HARP verification"
-        verif_path=$(yq -r '.verif.verif_path' "$yaml_file")
+        verif_path=$(yq -r '.verif.verif_path[0]' "$HARPCONFIG_yml")
     cd $HARP/visualization/
     Rscript launch_dynamicapp_atos.R "$verif_path" 9999 > $OSVAS/dynamicapp.log 2>&1 &
-    Rscript launch_visapp.R "$verif_path" 9998 > $OSVAS/visapp.log 2>&1 &
+    Rscript launch_visapp_atos.R "$verif_path" 9998 > $OSVAS/visapp.log 2>&1 &
 
-
+fi

@@ -1,6 +1,6 @@
 OSVAS_steps:
  Create_forcing: false
- Get_validation: true
+ Get_validation: false
  Run_surfex: false
  Surfex_steps: #Don't forget a space before each item
   - pgd
@@ -8,8 +8,8 @@ OSVAS_steps:
   - OFFLINE
  Expnames: #Don't forget a space before each item
   - DIFMEB_PUREOFFLINE
- Extract_model_sqlites: True
- Run_HARP: True
+ Extract_model_sqlites: false
+ Run_HARP: false
  Display_HARP: true
 
 Station_metadata:
@@ -25,8 +25,8 @@ Station_metadata:
 Forcing_data:
   height_T: 38.2  # Height of the temperature measurement https://maq-observations.nl/operational-data/
   height_V: 38.2  # Height of the windspeed   measurement https://maq-observations.nl/operational-data/
-  run_start: '2023-4-30 23:00:00'    # Timestamp for the forcing start
-  run_end: '2023-7-1 00:00:00'      # Timestamp for the forcing end
+  run_start: '2023-5-30 23:00:00'    # Timestamp for the forcing start
+  run_end: '2024-12-31 00:00:00'      # Timestamp for the forcing end
   forcing_format: 'ascii'          # Choose between netcdf or ascii
   dataset1:
     doi: https://meta.icos-cp.eu/objects/7ugz7AWJtLDjK9s5nBjjnQog
@@ -50,8 +50,8 @@ Forcing_data:
     variables:
       Forc_VPD: VPD
 Validation_data:
-  validation_start: '2023-5-15 23:00:00'
-  validation_end: '2023-7-1 00:00:00'
+  validation_start: '2024-1-1 00:00:00'
+  validation_end: '2024-12-31 23:00:00'
   common_obstable: TRUE
   dataset1: 
     doi: https://meta.icos-cp.eu/objects/7ugz7AWJtLDjK9s5nBjjnQog
