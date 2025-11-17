@@ -173,25 +173,17 @@ Validation_data:
 - The configuration file above will be treated by `Write_ICOS_forcing.ipynb` to generate forcing files in ascci or netcdf format according to the defined datasets and transformations, and by `ICOS_Flux_downloader.ipynb` to generate a validation dataset from the different ICOS datasets specified in the Validation_data block. 
 - **Sampling rate**: If several datasets with different sampling rates are provided, the data will be upsampled to a common (smallest) timedelta.
 
+### Step 3: Configure and run the simulations
+In this part, for every EXPNAME defined in Expnames:
+-  A directory for running the experiment is created in $OSVAS/RUNS/$STATION_NAME/$EXPNAME/run/
+-  Forcing and physiographic files are linked in the execution directory
+-  A copy of $OSVAS/namelists/Stations/{STATION_NAME}/OPTIONS.nam_{EXPNAME} is made as OPTIONS.nam in the execution directory
+-  NYEAR, NMONTH, NDAY, XTIME and CFORCING_FILETYPE namelists from OPTIONS.nam are modified according to the content in the yml file
+-  The SURFEX steps defined in OSVAS_steps.Surfex_steps are run
+-  The output netcdf files, OPTIONS.nam and *.txt logs are moved to $OSVAS/RUNS/$STATION_NAME/$EXPNAME/output/
 
-### 3. Simulation Execution
-- `surfex_OSVAS_run.sh`: A bash script to manage simulation runs over the selected station using the generated forcing files, organize model output in different folders, etc. 
-
-### 3. SURFEX Namelists
-- A set of SURFEX namelists tailored for each site, testing advanced SURFEX physics configurations:
-  - **3 patches, MEB, DIF, 3-layer snow model**.
-- Two versions of each namelist:
-  1. **Self-contained**: Uses physiographic data derived from station metadata, without external dependencies.
-  2. **NWP-like conditions**: Uses the same physiographic datasets as operational NWP runs. This can be achieved by running PGD for every site on ATOS, BELENOS, etc (where all phisiographic files are available) and extracting the PGD values to the namelist, or simply run all simulations (PGD-PREP-OFFLINE) under those HPCs.
-
-
-
-
-### 5. Define the station and experiments (namelists) to test and run the SURFEX OFFLINE steps
-This is controlled by 
-
-### 6. Convert SURFEX OFFLINE output data from ncfile to sqlite FCTABLES, for use in HARP.
-
+### Step 4: Sqlite extraction of model data
+#### The nc2sqlite tool
 Similarly to [grib2sqlite](https://github.com/destination-earth-digital-twins/grib2sqlite) utility, a new python tool has been created here to help extract SURFEX output variables from single-point OFFLINE SURFEX RUNS into FCTABLES suitable for use with HarPoint / [oper-harp-verif](https://github.com/harphub/oper-harp-verif) , or with other custom made verification software capable to read observations & simulation data from sqlite files. This tool needs a dictionary of SURFEX variable names to observation variable names (i.e. variable names present in the OBSTABLES files to be used for the validation). In order to use oper-harp-verif, these observation variable names should also be properly defined in file set_params.R from this set of scripts. In the future, nc2sqlite tool could be extended to allow data extraction from 2-D SURFEX offline runs, i.e. through interpolation from the NetCDF grid.
 
 ```
@@ -218,8 +210,37 @@ options:
   -m EXPERIMENT_NAME, --experiment_name EXPERIMENT_NAME
                         Experiment name
 ```
+#### Usage of nc2sqlite.py in OSVAS's workflow
+For each experiment, it extract a selection of variables defined in $OSVAS/scripts/nc2sqlite/param_list.json to FCTABLES* files in sqlite format. Make sure that your ICOS Station is included in $OSVAS/sqlites/station_list_SURFEX.csv with the same metadata as in the Station_metadata block of the yml file:
+``` 
+Station_metadata:
+  Station_name: Majadas_del_tietar
+  SID: 4300000005
+  elev: 265.0
+  lat: 39.94033
+  lon: -5.77465
+  vegtype: 19
+``` 
 
-## Next Steps
-- Additional instructions for **model output validation** will be included soon.
+### Step 5: Run a HARP point verification for the runs
+Currently, the only verification/validation software included in OSVAS is based in HARP and uses HARP verification scripts. HARP verifications are configured also with a HARP yaml file. In this step, the harp configuration template in $OSVAS/config_files/HARP/OSVAS_HARP_verif.yml is used to generate a configuration file for the verification. The template is modified to include a list of Expnames, paths to the observations for the station, verification period read from Validation_data.validation_start and Validation_data.validation_end, output paths. Currently this step only calls for the verification of H and LE, but can be easily extended to other variables.
 
+### Step 6: Display HARP verification results
+In this step, the script launches the visualization scripts available in oper-harp-verif to be able to visualize the HARP output:
+- launch_dynamicapp_atos.R : For dynamic inspection of HARP's output .rds data files
+- launch_visapp.R : For inspection of HARP's collection of png files with extra scores & visualizations.
+  
+These scripts launch the corresponding shiny apps using ports 9999 and 9998. To keep the terminal free, the output is redirected to $OSVAS/dynamicapp.log and $OSVAS/visapp.log.
 
+- In a linux machine, the shiny apps will be available at http://127.0.0.1:9999 and http://127.0.0.1:9998 by default
+- Often these ports are used by other instances of shiny apps (e.g. if they were not properly freed) or by other local services. If that's the case, the logs will inform about this. 
+- In order to free a port in this situation, use this command:  ``kill -9 $(lsof -t -i :9999)``
+- Alternativelly, change the ports in the corresponding step of the bash script.
+
+- When accessing ATOS with the VMWare Desktop tool, the shiny app runs in the hpc platform while the browser tipically runs in the virtual desktop login node (e.g. sp3c@lfcm-078). To visualize the shiny apps in the browser, an extra step is required. It is available in the dynamicapp.log and visapp.log files , and for completeness also here:
+```
+[1] "To display the Shiny app in a Firefox window at ATOS:"
+[1] "1: Open a new terminal."
+[1] "2: Execute this command: ssh -L 9999:localhost:9999 "
+[1] "3: Open a Firefox window and go to http://127.0.0.1:9999/"
+```
