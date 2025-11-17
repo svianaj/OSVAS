@@ -2,7 +2,7 @@
 
 See the sections:
 - [Installation](installation.md)
-- [Station Configuration](config_station.md)
+- [The OSVAS Workflow](OSVAS_workflow.md)
 - [Step 0](step0_paths_and_config.md)
 - [Step 1](step1_forcing.md)
 - [Step 2](step2_validation.md)
