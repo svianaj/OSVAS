@@ -1,26 +1,78 @@
-# OSVAS
+  # OSVAS
 ## Offline Surfex Validation System
 
 OSVAS is a set of scripts developed within the ACCORD community to provide a systematic approach for testing NWP-like SURFEX settings over specialized Atmospheric & Ecosystem stations from the ICOS project. It also facilitates validation of results using flux data from the same source.
 
 ## Installation
+### Get the OSVAS code
+```
+mkdir OSVAS
+cd OSVAS
+git clone https://github.com/svianaj/OSVAS.git .
+``` 
 ### Conda Environment
   It is advised to install the needed python packages as a conda environment.
-  If conda is not installed in your system:
-  ```
-  wget https://repo.anaconda.com/archive/Anaconda3-latest-Linux-x86_64.sh
-  bash Anaconda3-latest-Linux-x86_64.sh
-  ```
-  - Activate the base conda environment or load its module (e.g. module load conda/24.11.3-2 on ATOS).
-  - Then, run the script create_conda_environment.sh to install the dependencies. These include a specific yaml handling library for bash linux (yq, Go version from conda-forge and a number of python packages
+  On atos, it is available by loading its module:
+```
+  module load conda/24.11.3-2
+``` 
+  If it's not installed in your system, we recommend to use a Miniconda distribution:
+```
+    wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
+    bash Miniconda3-latest-Linux-x86_64.sh
+```
+You will be asked if you wish to update your shell profile to automatically initialize conda? The recommendation is "yes". This will modify your profile to have the conda commands available in your terminal on startup. The con is that it automatically activates the "base" environment in every new shell. But this can be easily avoided with this command:
+```
+    conda config --set auto_activate_base false
+```
+After intalling or loading conda's module:
+```
+cd scripts/bash_scripts
+./create_conda_environment.sh
+```
+  - This will create an OSVASENV conda environment and install the dependencies. These include a specific yaml handling library for bash linux (yq, Go version from conda-forge and a number of python packages)
   - For running the verification step, a functional HARP installation must be done & oper-harp-verif scripts downloaded from the repo.
   - Activate the conda environment to start using OSVAS.
-
-### Running Simulations
-- All the steps of the system are run from a bash script for linux ( surfex_OSVAS_run_linux.sh ) or ATOS systems (surfex_OSVAS_run_atos.sh) , 
+```
+conda env activate OSVASENV
+```
+### The OSVAS Workflow
+- Currently, all the steps of the OSVAS system are run from a bash script for linux ( surfex_OSVAS_run_linux.sh ) or ATOS systems (surfex_OSVAS_run_atos.sh). The script reads a .yaml file specific to every ICOS station where one can define what OSVAS steps to run for the station, what ICOS datasets read for forcing and validation, start and end periods for the run and for the validation, what SURFEX steps to run, names of the SURFEX OFFLINE experiments to run, etc.
 - A functional **SURFEX installation** is required.
-- Ensure SURFEX is correctly referenced in the bash script.
-  
+- Currently, the bash script must be edited only to specify the name of the ICOS station, locate the OSVAS and HARP paths, and make sure that SURFEX profile and binaries are correctly referenced:
+```
+export STATION_NAME=Majadas_del_tietar
+export OSVAS=/home/pn56/OSVASgh/ #SET PATH TO YOUR OSVAS SETUP
+export HARP=/home/pn56/operharpverif/  #SET PATH TO HARP SCRIPTS
+(....)
+# Define path of SURFEX code and SURFEX executables, add to $PATH
+SURFEX_PARENT=$HOME
+SURFEX_VER=SURFEX_NWP
+SURFEX_HOME=$SURFEX_PARENT/$SURFEX_VER  #PATH TO THE SURFEX SETUP
+SURFEX_PROFILE=profile_surfex-LXgfortran-SFX-V8-1-1-NOMPI-OMP-O2-X0
+SURFEXPATH=$SURFEX_HOME/src/SURFEX/   #PATH TO SURFEX CODE
+SURFEXEXE=$SURFEX_HOME/src/dir_obj-LXgfortran-SFX-V8-1-1-NOMPI-OMP-O2-X0/MASTER/ #PATH TO THE SURFEX EXECUTABLES
+```
+- In order to run PGD, one needs to link into the execution path, the physiographic files referenced in the namelists. For runs in a local linux we assume that the namelists use ecoclimapI or ecoclimapII param files (taken from the SURFEX setup) and the global dir/hdr files :
+```
+#SET PATH TO YOUR PHYSIOGRAPHY FILES
+PARAMFILES=${SURFEX_HOME}/MY_RUN/ECOCLIMAP/
+DIRFILES=$HOME/PHYSIO/  # Edit this with the location of e.g. ECOCLIMAP_II_EUROP.{hdr,dir} files
+```
+For runs on ATOS, there's also the possibility to run more NWP-alike namelists which make use of e.g. ECOCLIMAP-SG files in hlam's user:
+```
+#SET PATH TO YOUR PHYSIOGRAPHY FILES
+HM_CLDATA=/ec/res4/hpcperm/hlam/data/climate
+E923_DATA_PATH=$HM_CLDATA/E923_DATA
+PGD_DATA_PATH=$HM_CLDATA/PGD
+ECOSG_DATA_PATH=$HM_CLDATA/ECOCLIMAP-SG
+GMTED2010_DATA_PATH=$HM_CLDATA/GMTED2010
+SOILGRID_DATA_PATH=$HM_CLDATA/SOILGRID
+ECOSG_COVERS=$ECOSG_DATA_PATH/COVER
+#The following 2 physiography sources must come from a harmonie setup:
+GMTED_PATH=/ec/res4/scratch/sp3c/hm_home/harmonie46h111/climate/DKCOEXP/
+SOILGRIDS_PATH=/ec/res4/scratch/sp3c/hm_home/harmonie46h111/climate/DKCOEXP/
+```
 ## Steps of the OSVAS workflow:
 
 ### 1. Preparation of forcing data 
