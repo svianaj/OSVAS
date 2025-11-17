@@ -10,6 +10,7 @@ OSVAS_steps:
   - MEBREFOL
  Extract_model_sqlites: true
  Run_HARP: true
+ Display_HARP: true
 
 Station_metadata:
   Station_name: Majadas_del_tietar

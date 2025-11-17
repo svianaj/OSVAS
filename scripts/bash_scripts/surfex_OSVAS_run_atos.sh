@@ -216,8 +216,8 @@ if [[ "$Extract_model_sqlites" == true ]]; then
 	    echo "▶ Running Step 4: Extract model SQLITEs"
     	    cd $OSVAS/scripts/nc2sqlite/
  	    python3 nc2sqlite.py -p param_list.json -s ../../sqlites/station_list_SURFEX.csv -st $SID \
- 	     -o /home/pn56/OSVASgh/sqlites/model_data/$STATION_NAME/ \
- 	     -m $EXPNAME /home/pn56/OSVASgh/RUNS/$STATION_NAME/$EXPNAME/output/
+ 	     -o $OSVAS/sqlites/model_data/$STATION_NAME/ \
+ 	     -m $EXPNAME $OSVAS/RUNS/$STATION_NAME/$EXPNAME/output/
     #end loop
     done 	    
 else
@@ -265,5 +265,14 @@ else
     echo "⏩ Skipping Step 5: HARP verification"
 fi
 
+#####################################################################################################
+############ STEP 6: Display HARP verification results                      #########################
+#####################################################################################################
+if [[ "$Display_HARP" == true ]]; then
+    echo "▶ Running Step 6: Display HARP verification"
+        verif_path=$(yq -r '.verif.verif_path' "$yaml_file")
+    cd $HARP/visualization/
+    Rscript launch_dynamicapp_atos.R "$verif_path" 9999 > $OSVAS/dynamicapp.log 2>&1 &
+    Rscript launch_visapp.R "$verif_path" 9998 > $OSVAS/visapp.log 2>&1 &
 
 

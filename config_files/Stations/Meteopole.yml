@@ -10,6 +10,7 @@ OSVAS_steps:
   - MEB_REFBNR
  Extract_model_sqlites: False
  Run_HARP: False
+ Display_HARP: true
 
 Station_metadata:
   Station_name: Meteopole

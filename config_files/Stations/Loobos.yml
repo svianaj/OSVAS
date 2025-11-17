@@ -10,6 +10,7 @@ OSVAS_steps:
   - DIFMEB_PUREOFFLINE
  Extract_model_sqlites: True
  Run_HARP: True
+ Display_HARP: true
 
 Station_metadata:
   Station_name: Loobos
