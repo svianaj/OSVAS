@@ -241,6 +241,13 @@ day_start=$(date -d "$validation_start" +%d)
 year_end=$(date -d "$validation_end" +%Y)
 month_end=$(date -d "$validation_end" +%m)
 day_end=$(date -d "$validation_end" +%d)
+
+#Get list of variables to verify from the Station's general yml file:
+vars=$(yq -r '.Validation_data |
+    with_entries(select(.key|test("dataset[0-9]+"))) |
+    .[].variables | keys | .[]' $yaml_file | paste -sd "," -)
+
+echo "Variables to verify with HARP: $vars"
 if [[ "$Run_HARP" == true ]]; then
     echo "▶ Running Step 5: HARP verification"
     cp "$HARPCONFIG_yml_template" "$HARPCONFIG_yml"
@@ -269,7 +276,7 @@ if [[ "$Run_HARP" == true ]]; then
       -end_date   "${year_end}${month_end}${day_end}" \
       -config_file "$HARPCONFIG_yml" \
       -params_file "${OSVAS}/config_files/HARP/set_params.R" \
-      -params_list=H,LE
+      -params_list=$vars
 
 else
     echo "⏩ Skipping Step 5: HARP verification"
@@ -283,6 +290,5 @@ if [[ "$Display_HARP" == true ]]; then
         verif_path=$(yq -r '.verif.verif_path[0]' "$HARPCONFIG_yml")
     cd $HARP/visualization/
     Rscript launch_dynamicapp_atos.R "$verif_path" 9999 > $OSVAS/dynamicapp.log 2>&1 &
-    Rscript launch_visapp_atos.R "$verif_path" 9998 > $OSVAS/visapp.log 2>&1 &
-
+    Rscript launch_visapp_atos.R -img_dir "$verif_path" -port 9998 > $OSVAS/visapp.log 2>&1 &
 fi

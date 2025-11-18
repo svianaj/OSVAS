@@ -1,7 +1,7 @@
 OSVAS_steps:
  Create_forcing: False
  Get_validation: False
- Run_surfex: True
+ Run_surfex: False
  Surfex_steps: #Don't forget a space before each item
   - pgd
   - PREP
@@ -9,7 +9,7 @@ OSVAS_steps:
  Expnames: #Don't forget a space before each item
   - MEB_REFBNR
  Extract_model_sqlites: False
- Run_HARP: False
+ Run_HARP: True
  Display_HARP: true
 
 Station_metadata:
@@ -24,8 +24,8 @@ Station_metadata:
 Forcing_data:
   height_T: 2                       # Height of the temperature measurement
   height_V: 10                      # Height of the windspeed   measurement
-  run_start: '2021-01-01 00:00:00'    # Timestamp for the forcing start
-  run_end: '2022-01-01 00:00:00'      # Timestamp for the forcing end
+  run_start: '2020-05-01 00:00:00'    # Timestamp for the forcing start
+  run_end: '2021-12-31 23:30:00'      # Timestamp for the forcing end
   forcing_format: 'ascii'          # Choose between netcdf or ascii
   dataset1:
     doi: https://meta.icos-cp.eu/objects/VIoR-cJnMUUjbaEkuNHMKgSv
@@ -45,8 +45,8 @@ Forcing_data:
       Forc_RH: RH
 Validation_data:
   validation_start: '2021-01-01 00:00:00'
-  validation_end: '2022-01-01 00:00:00'
-  common_obstable: TRUE
+  validation_end: '2021-12-31 23:30:00'
+  common_obstable: FALSE
   dataset1: 
     doi: https://meta.icos-cp.eu/objects/VIoR-cJnMUUjbaEkuNHMKgSv
     timedelta: 30
@@ -66,21 +66,21 @@ Validation_data:
       SWC_4: SWC_4
       SWC_5: SWC_5
       G: G
-    units:  # These should be similar to units attribute in output netcdf files
+    units:  # If compatible, these should be similar to units attribute in output netcdf files. Otherwise a conversion in set_params.R will be needed
       SW_OUT: W/m2
       LW_OUT: W/m2
       LW_IN: W/m2
       SW_IN: W/m2
-      TS_1: K
-      TS_2: K
-      TS_3: K
-      TS_4: K
-      TS_5: K        
-      SWC_1: m3/m3
-      SWC_2: m3/m3
-      SWC_3: m3/m3
-      SWC_4: m3/m3
-      SWC_5: m3/m3
+      TS_1: degC
+      TS_2: degC
+      TS_3: degC
+      TS_4: degC
+      TS_5: degC        
+      SWC_1: percent
+      SWC_2: percent
+      SWC_3: percent
+      SWC_4: percent
+      SWC_5: percent
       G: W/m2
   dataset2: 
     doi: https://meta.icos-cp.eu/objects/No7s1uuHhY2frqKUg6CSIRV-

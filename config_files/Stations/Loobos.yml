@@ -9,7 +9,7 @@ OSVAS_steps:
  Expnames: #Don't forget a space before each item
   - DIFMEB_PUREOFFLINE
  Extract_model_sqlites: false
- Run_HARP: false
+ Run_HARP: true
  Display_HARP: true
 
 Station_metadata:
@@ -52,7 +52,7 @@ Forcing_data:
 Validation_data:
   validation_start: '2024-1-1 00:00:00'
   validation_end: '2024-12-31 23:00:00'
-  common_obstable: TRUE
+  common_obstable: FALSE
   dataset1: 
     doi: https://meta.icos-cp.eu/objects/7ugz7AWJtLDjK9s5nBjjnQog
     timedelta: 30
@@ -72,21 +72,21 @@ Validation_data:
       SWC_4: SWC_4
       SWC_5: SWC_5
       G: G_2
-    units:  # These should be similar to units attribute in output netcdf files
+    units:  # If compatible, these should be similar to units attribute in output netcdf files. Otherwise a conversion in set_params.R will be needed
       SW_OUT: W/m2
       LW_OUT: W/m2
       LW_IN: W/m2
       SW_IN: W/m2
-      TS_1: K
-      TS_2: K
-      TS_3: K
-      TS_4: K
-      TS_5: K        
-      SWC_1: m3/m3
-      SWC_2: m3/m3
-      SWC_3: m3/m3
-      SWC_4: m3/m3
-      SWC_5: m3/m3
+      TS_1: degC
+      TS_2: degC
+      TS_3: degC
+      TS_4: degC
+      TS_5: degC        
+      SWC_1: percent
+      SWC_2: percent
+      SWC_3: percent
+      SWC_4: percent
+      SWC_5: percent
       G: W/m2
   dataset2: 
     doi: https://meta.icos-cp.eu/objects/Hz_PRfzpkwrLsuZWhrwzCzDm

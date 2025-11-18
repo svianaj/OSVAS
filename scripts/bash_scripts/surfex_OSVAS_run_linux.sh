@@ -9,7 +9,7 @@ set -x
 # Select name of the Station where to run the simulation, and the experiment name to import the yaml
 # configuration, namelist, etc Currently select between Majadas_del_tietar (ES), Meteopole(FR),
 # Loobos(NL). Make sure you have a recent token for the ICOS API stored in $OSVAS/icos_cookie.txt
-export STATION_NAME=Loobos
+export STATION_NAME=Majadas_del_tietar
 export OSVAS=/home/pn56/OSVASgh/ #SET PATH TO YOUR OSVAS SETUP
 export HARP=/home/pn56/operharpverif/  #SET PATH TO HARP SCRIPTS
 yaml_file="$OSVAS/config_files/Stations/${STATION_NAME}.yml"
@@ -195,7 +195,7 @@ if [[ "$Extract_model_sqlites" == true ]]; then
     for EXPNAME in $EXPNAMES; do
 	    echo "▶ Running Step 4: Extract model SQLITEs"
     	    cd $OSVAS/scripts/nc2sqlite/
- 	    python3 nc2sqlite.py -p param_list.json -s ../../sqlites/station_list_SURFEX.csv -st $SID \
+ 	    python3 nc2sqlite.py -p 	param_list.json -s ../../sqlites/station_list_SURFEX.csv -st $SID \
  	     -o $OSVAS/sqlites/model_data/$STATION_NAME/ \
  	     -m $EXPNAME $OSVAS/RUNS/$STATION_NAME/$EXPNAME/output/
     #end loop
@@ -221,6 +221,13 @@ day_start=$(date -d "$validation_start" +%d)
 year_end=$(date -d "$validation_end" +%Y)
 month_end=$(date -d "$validation_end" +%m)
 day_end=$(date -d "$validation_end" +%d)
+
+#Get list of variables to verify from the Station's general yml file:
+vars=$(yq -r '.Validation_data |
+    with_entries(select(.key|test("dataset[0-9]+"))) |
+    .[].variables | keys | .[]' $yaml_file | paste -sd "," -)
+#vars="H,LE"
+echo "Variables to verify with HARP: $vars"
 if [[ "$Run_HARP" == true ]]; then
     echo "▶ Running Step 5: HARP verification"
     cp "$HARPCONFIG_yml_template" "$HARPCONFIG_yml"
@@ -249,7 +256,7 @@ if [[ "$Run_HARP" == true ]]; then
       -end_date   "${year_end}${month_end}${day_end}" \
       -config_file "$HARPCONFIG_yml" \
       -params_file "${OSVAS}/config_files/HARP/set_params.R" \
-      -params_list=H,LE
+      -params_list=$vars
 
 else
     echo "⏩ Skipping Step 5: HARP verification"
@@ -263,6 +270,5 @@ if [[ "$Display_HARP" == true ]]; then
         verif_path=$(yq -r '.verif.verif_path[0]' "$HARPCONFIG_yml")
     cd $HARP/visualization/
     Rscript launch_dynamicapp_atos.R "$verif_path" 9999 > $OSVAS/dynamicapp.log 2>&1 &
-    Rscript launch_visapp_atos.R "$verif_path" 9998 > $OSVAS/visapp.log 2>&1 &
-
+    Rscript launch_visapp_atos.R -img_dir "$verif_path" -port 9998 > $OSVAS/visapp.log 2>&1 &
 fi
