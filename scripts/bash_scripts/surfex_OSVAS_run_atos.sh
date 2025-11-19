@@ -22,8 +22,8 @@ conda activate $CONDAENV
 # configuration, namelist, etc Currently select between Majadas_del_tietar (ES), Meteopole(FR),
 # Loobos(NL). Make sure you have a recent token for the ICOS API stored in $OSVAS/icos_cookie.txt
 export STATION_NAME=Majadas_del_tietar
-export OSVAS=/home/pn56/OSVASgh/ #SET PATH TO YOUR OSVAS SETUP
-export HARP=/home/pn56/operharpverif/  #SET PATH TO HARP SCRIPTS
+export OSVAS=/perm/sp3c/OSVAS/ #SET PATH TO YOUR OSVAS SETUP
+export HARP=/perm/sp3c/harmonie_release/oper-harp-verif_orig/  #SET PATH TO HARP SCRIPTS
 yaml_file="$OSVAS/config_files/Stations/${STATION_NAME}.yml"
 
 # --- Read execution control from YAML (case-insensitive booleans)
@@ -75,19 +75,14 @@ fi
 SURFEX_PARENT=$HPCPERM # Parent directory where all your SURFEX versions are.
 SURFEX_VER=SURFEX_NWP_NOMPI         # Name of your surfex version (folder name)
 SURFEX_HOME=$SURFEX_PARENT/$SURFEX_VER  #PATH TO THE SURFEX SETUP
-SURFEX_PROFILE=dir_obj-atos-gnu-SFX-V8-1-1-NOMPI-OMP-O2-X0 # Name of the surfex profile file
-SURFEXPATH=$SURFEX_HOME/$SURFEX_HOME/src/SURFEX/   #PATH TO SURFEX CODE
-SURFEXEXE=$SURFEX_HOME/$SURFEX_HOME/src/${SURFEX_PROFILE}/MASTER/ #PATH TO THE SURFEX EXECUTABLES
-
+SURFEX_PROFILE=profile_surfex-atos-gnu-SFX-V8-1-1-NOMPI-OMP-O2-X0 # Name of the surfex profile file
+SURFEXEXE=$SURFEX_HOME/src/dir_obj-atos-gnu-SFX-V8-1-1-NOMPI-OMP-O2-X0/MASTER/ #PATH TO SURFEX BINS 
 
 # Add these to the $PATH
 export PATH=${SURFEXEXE}:$PATH
 
-#Source the SURFEX profile file:
-SURFEXPROFILE=${SURFEX_HOME}/conf/$SURFEX_PROFILE
-source $SURFEXPROFILE
-
 #SET PATH TO YOUR PHYSIOGRAPHY FILES
+PARAMFILES=${SURFEX_HOME}/MY_RUN/ECOCLIMAP/  # ECOCLIMAP param/bin files
 HM_CLDATA=/ec/res4/hpcperm/hlam/data/climate
 E923_DATA_PATH=$HM_CLDATA/E923_DATA
 PGD_DATA_PATH=$HM_CLDATA/PGD
@@ -99,10 +94,6 @@ ECOSG_COVERS=$ECOSG_DATA_PATH/COVER
 GMTED_PATH=/ec/res4/scratch/sp3c/hm_home/harmonie46h111/climate/DKCOEXP/
 SOILGRIDS_PATH=/ec/res4/scratch/sp3c/hm_home/harmonie46h111/climate/DKCOEXP/
 
-
-# After the export, make sure that the correct executables will be used
-echo $PATH
-which OFFLINE
 
 #####################################################################################################
 #####################################################################################################
@@ -151,6 +142,12 @@ echo "$seconds_since_midnight"
 #####################################################################################################
 if [[ "$Run_surfex" == true ]]; then
     echo "▶ Running Step 3: Run SURFEX offline simulations"
+    #Source the SURFEX profile file:
+    SURFEX_PROFILE_PATH=${SURFEX_HOME}/conf/$SURFEX_PROFILE
+    source $SURFEX_PROFILE_PATH
+    # After the export, make sure that the correct executables will be used
+    echo $PATH
+    which OFFLINE
     for EXPNAME in $EXPNAMES; do
 	mkdir -p $OSVAS/RUNS/$STATION_NAME/$EXPNAME/run/
 	mkdir -p $OSVAS/RUNS/$STATION_NAME/$EXPNAME/output/
@@ -166,7 +163,7 @@ if [[ "$Run_surfex" == true ]]; then
 	#Link physiographic files to execution folder
 	for p in "$PGD_DATA_PATH" "$ECOSG_DATA_PATH" "$GMTED2010_DATA_PATH" "$SOILGRID_DATA_PATH" \
 	         "$ECOSG_DATA_PATH/LAI_SAT" "$ECOSG_DATA_PATH/ALB_SAT" "$ECOSG_DATA_PATH/COVER" \
-	         "$ECOSG_DATA_PATH/HT" "$GMTED_PATH" "$SOILGRIDS_PATH"; do
+	         "$ECOSG_DATA_PATH/HT" "$GMTED_PATH" "$SOILGRIDS_PATH" "$PARAMFILES"; do
 	  ln -s "$p"/* "$RUNDIR"
 	done
 
@@ -274,7 +271,10 @@ if [[ "$Run_HARP" == true ]]; then
         echo "ERROR: cannot cd to $HARP" >&2
         exit 1
     fi
-
+    # To run R & HARP on ATOS, one needs to exit the conda env
+    conda deactivate OSVASENV
+    module reset
+    source /perm/snh02/DE_Verification/Renv_oper/Setenv
     Rscript "$HARP/verification/point_verif.R" \
       -start_date "${year_start}${month_start}${day_start}" \
       -end_date   "${year_end}${month_end}${day_end}" \
@@ -296,3 +296,6 @@ if [[ "$Display_HARP" == true ]]; then
     Rscript launch_dynamicapp_atos.R "$verif_path" 9999 > $OSVAS/dynamicapp.log 2>&1 &
     Rscript launch_visapp_atos.R -img_dir "$verif_path" -port 9998 > $OSVAS/visapp.log 2>&1 &
 fi
+yq --version
+echo $PATH
+which yq

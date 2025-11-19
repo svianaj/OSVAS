@@ -75,7 +75,7 @@ source $SURFEXPROFILE
 
 #SET PATH TO YOUR PHYSIOGRAPHY FILES
 PARAMFILES=${SURFEX_HOME}/MY_RUN/ECOCLIMAP/  # ECOCLIMAP param/bin files
-DIRFILES=$HOME/PHYSIO/                       # hdr/dir files of ECOCLIMAP version in the namelists
+DIRFILES=$HOME/PHYSIO/                       # hdr/dir files of ECOCLIMAP I/II version in the namelists
 
 # After the export, make sure that the correct executables will be used
 echo $PATH

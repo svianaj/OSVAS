@@ -33,7 +33,7 @@
                        XUNIF_TOWN   = 0.,
                        XUNIF_NATURE = 1.
 /
-&NAM_COVER 	       YCOVER = 'ECOCLIMAP_II_EUROP',
+&NAM_COVER 	       YCOVER = 'ECOCLIMAP_II_EUROP_V2.2',
 		       YCOVERFILETYPE = 'DIRECT' ,
 		       XRM_COVER = 0.01
 /

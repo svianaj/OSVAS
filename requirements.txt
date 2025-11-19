@@ -7,4 +7,6 @@ xarray
 netCDF4
 cftime
 icoscp
-
+notebook
+nbconvert
+jupyterlab
