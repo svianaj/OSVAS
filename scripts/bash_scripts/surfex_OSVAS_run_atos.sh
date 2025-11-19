@@ -26,15 +26,16 @@ export OSVAS=/home/pn56/OSVASgh/ #SET PATH TO YOUR OSVAS SETUP
 export HARP=/home/pn56/operharpverif/  #SET PATH TO HARP SCRIPTS
 yaml_file="$OSVAS/config_files/Stations/${STATION_NAME}.yml"
 
-# --- Read execution control from YAML (case-insensitive booleans) ---
+# --- Read execution control from YAML (case-insensitive booleans)
 Create_forcing=$(yq -r '.OSVAS_steps.Create_forcing // "false"' "$yaml_file" | tr '[:upper:]' '[:lower:]')
 Get_validation=$(yq -r '.OSVAS_steps.Get_validation // "false"' "$yaml_file" | tr '[:upper:]' '[:lower:]')
 Run_surfex=$(yq -r '.OSVAS_steps.Run_surfex // "false"' "$yaml_file" | tr '[:upper:]' '[:lower:]')
 Extract_model_sqlites=$(yq -r '.OSVAS_steps.Extract_model_sqlites // "false"' "$yaml_file" | tr '[:upper:]' '[:lower:]')
 Run_HARP=$(yq -r '.OSVAS_steps.Run_HARP // "false"' "$yaml_file" | tr '[:upper:]' '[:lower:]')
+Display_HARP=$(yq -r '.OSVAS_steps.Display_HARP // "false"' "$yaml_file" | tr '[:upper:]' '[:lower:]')
 EXPNAMES=$(yq -r '.OSVAS_steps.Expnames[]?' "$yaml_file" | xargs)
 
-
+###################################################################################################
 ###### STEP 1: Downloading forcing data from ICOS stations ########################################
 ###### This is done by calling Write_ICOS_forcing.ipynb    ########################################
 ###################################################################################################
@@ -49,9 +50,9 @@ if [[ "$Create_forcing" == true ]]; then
 else
     echo "⏩ Skipping Step 1: Create forcing data"
 fi
-
+####################################################################################################
 #### STEP 2: Get Validation data from ICOS stations ################################################
-###### This is done by calling ICOS_Flux_Downloader.ipynb ##########################################
+#### This is done by calling ICOS_Flux_Downloader.ipynb ############################################
 ####################################################################################################
 VALIDATION_NOTEBOOK=${OSVAS}/scripts/notebooks/ICOS_Flux_Downloader.ipynb
 # Run the notebook from this bash script using nbconvert 
@@ -64,13 +65,11 @@ else
 fi
 
 
-
-#### STEP 3: CONFIGURE AND RUN THE SIMULATIONS #####################################################
-####################################################################################################
-
 #####################################################################################################
-# 3.1 Location of SURFEX setup, make useful links, ##################################################
-###   select validation station, experiments/namelists to import, make run & output paths ###########
+#### STEP 3: CONFIGURE AND RUN THE SIMULATIONS ######################################################
+#### Set path to the SURFEX setup & physiographic files, read experiments/namelists to import #######
+#### make run & output paths, make useful links (forcing & physiographic files,  modify dates #######
+#### in the namelists, run SURFEX for each experiment################################################
 #####################################################################################################
 # Define path of SURFEX code and SURFEX executables, add to $PATH
 SURFEX_PARENT=$HPCPERM # Parent directory where all your SURFEX versions are.
@@ -79,6 +78,14 @@ SURFEX_HOME=$SURFEX_PARENT/$SURFEX_VER  #PATH TO THE SURFEX SETUP
 SURFEX_PROFILE=dir_obj-atos-gnu-SFX-V8-1-1-NOMPI-OMP-O2-X0 # Name of the surfex profile file
 SURFEXPATH=$SURFEX_HOME/$SURFEX_HOME/src/SURFEX/   #PATH TO SURFEX CODE
 SURFEXEXE=$SURFEX_HOME/$SURFEX_HOME/src/${SURFEX_PROFILE}/MASTER/ #PATH TO THE SURFEX EXECUTABLES
+
+
+# Add these to the $PATH
+export PATH=${SURFEXEXE}:$PATH
+
+#Source the SURFEX profile file:
+SURFEXPROFILE=${SURFEX_HOME}/conf/$SURFEX_PROFILE
+source $SURFEXPROFILE
 
 #SET PATH TO YOUR PHYSIOGRAPHY FILES
 HM_CLDATA=/ec/res4/hpcperm/hlam/data/climate
@@ -93,18 +100,11 @@ GMTED_PATH=/ec/res4/scratch/sp3c/hm_home/harmonie46h111/climate/DKCOEXP/
 SOILGRIDS_PATH=/ec/res4/scratch/sp3c/hm_home/harmonie46h111/climate/DKCOEXP/
 
 
-
-# Add these to the $PATH
-export PATH=${SURFEXEXE}:$PATH
-
-#Source the SURFEX profile file:
-SURFEXPROFILE=${SURFEX_HOME}/conf/$SURFEX_PROFILE
-source $SURFEXPROFILE
-
 # After the export, make sure that the correct executables will be used
 echo $PATH
 which OFFLINE
 
+#####################################################################################################
 #####################################################################################################
 #### It is assumed that there are working OPTIONS.nam namelists for a number of EXPs in 
 #### $OSVAS/namelists/$STATION_NAME/OPTIONS.nam_${EXP}
@@ -112,6 +112,8 @@ which OFFLINE
 #### First, get dates for the experiment here (outside the if loop)
 #### to get dates that are also needed by steps 4 and 5:
 #### Extract key parameters using yq (Go version)
+#####################################################################################################
+#####################################################################################################
 run_start=$(yq '.Forcing_data.run_start' "$yaml_file" | tr -d "'\"")
 run_end=$(yq '.Forcing_data.run_end' "$yaml_file" | tr -d "'\"")
 forcing_format=$(yq '.Forcing_data.forcing_format' "$yaml_file" | tr -d "'\"")
@@ -145,6 +147,8 @@ echo "$seconds_since_midnight"
 #####################################################################################################
 #Loop through the defined EXPNAMES, make experiment directories,
 #make physiography copy the corresponding namelists, run the offline experiment:
+#####################################################################################################
+#####################################################################################################
 if [[ "$Run_surfex" == true ]]; then
     echo "▶ Running Step 3: Run SURFEX offline simulations"
     for EXPNAME in $EXPNAMES; do
@@ -215,7 +219,7 @@ if [[ "$Extract_model_sqlites" == true ]]; then
     for EXPNAME in $EXPNAMES; do
 	    echo "▶ Running Step 4: Extract model SQLITEs"
     	    cd $OSVAS/scripts/nc2sqlite/
- 	    python3 nc2sqlite.py -p param_list.json -s ../../sqlites/station_list_SURFEX.csv -st $SID \
+ 	    python3 nc2sqlite.py -p param_dict.json -s ../../sqlites/station_list_SURFEX.csv -st $SID \
  	     -o $OSVAS/sqlites/model_data/$STATION_NAME/ \
  	     -m $EXPNAME $OSVAS/RUNS/$STATION_NAME/$EXPNAME/output/
     #end loop

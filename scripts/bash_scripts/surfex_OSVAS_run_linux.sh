@@ -23,7 +23,7 @@ Run_HARP=$(yq -r '.OSVAS_steps.Run_HARP // "false"' "$yaml_file" | tr '[:upper:]
 Display_HARP=$(yq -r '.OSVAS_steps.Display_HARP // "false"' "$yaml_file" | tr '[:upper:]' '[:lower:]')
 EXPNAMES=$(yq -r '.OSVAS_steps.Expnames[]?' "$yaml_file" | xargs)
 
-
+###################################################################################################
 ###### STEP 1: Downloading forcing data from ICOS stations ########################################
 ###### This is done by calling Write_ICOS_forcing.ipynb    ########################################
 ###################################################################################################
@@ -38,9 +38,9 @@ if [[ "$Create_forcing" == true ]]; then
 else
     echo "⏩ Skipping Step 1: Create forcing data"
 fi
-
+####################################################################################################
 #### STEP 2: Get Validation data from ICOS stations ################################################
-###### This is done by calling ICOS_Flux_Downloader.ipynb ##########################################
+#### This is done by calling ICOS_Flux_Downloader.ipynb ############################################
 ####################################################################################################
 VALIDATION_NOTEBOOK=${OSVAS}/scripts/notebooks/ICOS_Flux_Downloader.ipynb
 # Run the notebook from this bash script using nbconvert 
@@ -53,28 +53,18 @@ else
 fi
 
 
-
-#### STEP 3: CONFIGURE AND RUN THE SIMULATIONS #####################################################
-####################################################################################################
-
 #####################################################################################################
-# 3.1 Location of SURFEX setup, make useful links, ##################################################
-###   select validation station, experiments/namelists to import, make run & output paths ###########
+#### STEP 3: CONFIGURE AND RUN THE SIMULATIONS ######################################################
+#### Set path to the SURFEX setup & physiographic files, read experiments/namelists to import #######
+#### make run & output paths, make useful links (forcing & physiographic files,  modify dates #######
+#### in the namelists, run SURFEX for each experiment################################################
 #####################################################################################################
 # Define path of SURFEX code and SURFEX executables, add to $PATH
 SURFEX_PARENT=$HOME
 SURFEX_VER=SURFEX_NWP
-#SURFEX_VER=OPEN_SURFEX/open_SURFEX_V8_1
 SURFEX_HOME=$SURFEX_PARENT/$SURFEX_VER  #PATH TO THE SURFEX SETUP
 SURFEX_PROFILE=profile_surfex-LXgfortran-SFX-V8-1-1-NOMPI-OMP-O2-X0
-#SURFEX_PROFILE=profile_surfex-LXgfortran-SFX-V8-1-1-MPIAUTO-OMP-O2-X0
-SURFEXPATH=$SURFEX_HOME/src/SURFEX/   #PATH TO SURFEX CODE
-SURFEXEXE=$SURFEX_HOME/src/dir_obj-LXgfortran-SFX-V8-1-1-NOMPI-OMP-O2-X0/MASTER/ #PATH TO THE SURFEX EXECUTABLES
-#SURFEXEXE=$SURFEX_HOME/src/dir_obj-LXgfortran-SFX-V8-1-1-MPIAUTO-OMP-O2-X0/MASTER/
-
-#SET PATH TO YOUR PHYSIOGRAPHY FILES
-PARAMFILES=${SURFEX_HOME}/MY_RUN/ECOCLIMAP/
-DIRFILES=$HOME/PHYSIO/
+SURFEXEXE=$SURFEX_HOME/src/dir_obj-LXgfortran-SFX-V8-1-1-NOMPI-OMP-O2-X0/MASTER/ #PATH TO SURFEX BINS 
 
 # Add these to the $PATH
 export PATH=${SURFEXEXE}:$PATH
@@ -83,10 +73,15 @@ export PATH=${SURFEXEXE}:$PATH
 SURFEXPROFILE=${SURFEX_HOME}/conf/$SURFEX_PROFILE
 source $SURFEXPROFILE
 
+#SET PATH TO YOUR PHYSIOGRAPHY FILES
+PARAMFILES=${SURFEX_HOME}/MY_RUN/ECOCLIMAP/  # ECOCLIMAP param/bin files
+DIRFILES=$HOME/PHYSIO/                       # hdr/dir files of ECOCLIMAP version in the namelists
+
 # After the export, make sure that the correct executables will be used
 echo $PATH
 which OFFLINE
 
+#####################################################################################################
 #####################################################################################################
 #### It is assumed that there are working OPTIONS.nam namelists for a number of EXPs in 
 #### $OSVAS/namelists/$STATION_NAME/OPTIONS.nam_${EXP}
@@ -94,6 +89,8 @@ which OFFLINE
 #### First, get dates for the experiment here (outside the if loop)
 #### to get dates that are also needed by steps 4 and 5:
 #### Extract key parameters using yq (Go version)
+#####################################################################################################
+#####################################################################################################
 run_start=$(yq '.Forcing_data.run_start' "$yaml_file" | tr -d "'\"")
 run_end=$(yq '.Forcing_data.run_end' "$yaml_file" | tr -d "'\"")
 forcing_format=$(yq '.Forcing_data.forcing_format' "$yaml_file" | tr -d "'\"")
@@ -127,6 +124,8 @@ echo "$seconds_since_midnight"
 #####################################################################################################
 #Loop through the defined EXPNAMES, make experiment directories,
 #make physiography copy the corresponding namelists, run the offline experiment:
+#####################################################################################################
+#####################################################################################################
 if [[ "$Run_surfex" == true ]]; then
     echo "▶ Running Step 3: Run SURFEX offline simulations"
     for EXPNAME in $EXPNAMES; do
@@ -195,7 +194,7 @@ if [[ "$Extract_model_sqlites" == true ]]; then
     for EXPNAME in $EXPNAMES; do
 	    echo "▶ Running Step 4: Extract model SQLITEs"
     	    cd $OSVAS/scripts/nc2sqlite/
- 	    python3 nc2sqlite.py -p 	param_list.json -s ../../sqlites/station_list_SURFEX.csv -st $SID \
+ 	    python3 nc2sqlite.py -p param_dict.json -s ../../sqlites/station_list_SURFEX.csv -st $SID \
  	     -o $OSVAS/sqlites/model_data/$STATION_NAME/ \
  	     -m $EXPNAME $OSVAS/RUNS/$STATION_NAME/$EXPNAME/output/
     #end loop
@@ -226,7 +225,7 @@ day_end=$(date -d "$validation_end" +%d)
 vars=$(yq -r '.Validation_data |
     with_entries(select(.key|test("dataset[0-9]+"))) |
     .[].variables | keys | .[]' $yaml_file | paste -sd "," -)
-#vars="H,LE"
+
 echo "Variables to verify with HARP: $vars"
 if [[ "$Run_HARP" == true ]]; then
     echo "▶ Running Step 5: HARP verification"

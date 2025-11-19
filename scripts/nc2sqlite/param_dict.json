@@ -1,6 +1,6 @@
 
 {
-    "_comment": "Parameter mapping between SURFEX variable names (left column) and observation variable names",
+    "_comment": "Parameter mapping between SURFEX variable names (left column) in netcdf files and observation variable names",
     "RI_ISBA": "RI",
     "H_ISBA": "H",
     "LE_ISBA": "LE",

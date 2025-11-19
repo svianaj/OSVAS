@@ -13,7 +13,7 @@ import traceback
 
 def parse_args():
     parser = argparse.ArgumentParser(description="Convert point NetCDF SURFEX output to SQLite.")
-    parser.add_argument("-p", "--param_list", required=True, help="Path to param_list.json")
+    parser.add_argument("-p", "--param_dict", required=True, help="Path to param_dict.json")
     parser.add_argument("-s", "--station_list", required=True, help="Path to station_list_default.csv")
     parser.add_argument("-st", "--station", required=True, type=int, help="Station ID")
     parser.add_argument("-o", "--output", required=True, help="Output base directory")
@@ -171,7 +171,7 @@ def main():
     SID, z, lat, lon = station['SID'], station['z'], station['lat'], station['lon']
 
     # Load param_dict from JSON file
-    with open(args.param_list) as f:
+    with open(args.param_dict) as f:
         param_dict = json.load(f)  # Expecting a dict: {netcdf_name: output_name}
 
     nc_files = list(Path(args.ncdir).glob("*.nc"))
