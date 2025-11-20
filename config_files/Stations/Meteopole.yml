@@ -50,7 +50,7 @@ Validation_data:
   dataset1: 
     doi: https://meta.icos-cp.eu/objects/VIoR-cJnMUUjbaEkuNHMKgSv
     timedelta: 30
-    variables:
+    variables: # Map ICOS variables (right) to a name (left) in the OBSTABLE
       SW_OUT: SW_OUT
       LW_OUT: LW_OUT
       SW_IN: SW_IN

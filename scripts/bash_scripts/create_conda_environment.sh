@@ -70,7 +70,7 @@ fi
 if [[ -d "/ec/res4/scratch" ]]; then
    module reset
    cd ../../renv_atos/
-   #./atos_renv_setup.sh
+   ./atos_renv_setup.sh
    CURRENT_WDIR="$(pwd)"
    SETENV_FILE="$(pwd)/Setenv"
    # Update R_PROFILE_USER line
@@ -78,10 +78,19 @@ if [[ -d "/ec/res4/scratch" ]]; then
 
    # Update RENV_PROJECT line
    sed -i "s|^export RENV_PROJECT=.*|export RENV_PROJECT=$CURRENT_WDIR/|" "$SETENV_FILE"
+   #Update .Rprofile
+   RPROFILE_FILE="$(pwd)/.Rprofile"
+   # If .Rprofile exists: replace "source(...)" line
+   if [[ -f "$RPROFILE_FILE" ]]; then
+       sed -i "s|^source.*|source(\"$CURRENT_WDIR/renv/activate.R\")|" "$RPROFILE_FILE"
+   else
+       echo "WARNING: $RPROFILE_FILE not found, creating it"
+       echo "source(\"$CURRENT_WDIR/renv/activate.R\")" > "$RPROFILE_FILE"
+   fi
    echo "Finished HARP installation in Renv; to test it in this terminal, do: "
    echo " module reset "
    echo " source $CURRENT_WDIR/Setenv "
-   echo " Rscript -e "library(harp)" "
+   echo " Rscript -e \"library(harp)\" "
 fi
 
 # 7. Final activation message

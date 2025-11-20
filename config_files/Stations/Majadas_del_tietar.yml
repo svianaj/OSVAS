@@ -1,14 +1,14 @@
 OSVAS_steps:
- Create_forcing: true
- Get_validation: true
- Run_surfex: True
+ Create_forcing: false
+ Get_validation: false
+ Run_surfex: false
  Surfex_steps: #Don't forget a space before each item
   - pgd
   - PREP
   - OFFLINE
  Expnames: #Don't forget a space before each item
   - MEBREFOL
- Extract_model_sqlites: true
+ Extract_model_sqlites: false
  Run_HARP: true
  Display_HARP: true
 
@@ -44,12 +44,12 @@ Forcing_data:
       Forc_RH: RH
 Validation_data:
   validation_start: '2022-1-01 00:00:00'
-  validation_end: '2022-12-31 23:30:00'
+  validation_end: '2021-12-31 23:30:00'
   common_obstable: FALSE  # Write obs to a common obstable or to a single-station one
   dataset1: 
     doi: https://meta.icos-cp.eu/objects/fPAqntOb1uiTQ2KI1NS1CHlB
     timedelta: 30
-    variables:
+    variables: # Map ICOS variables (right) to a name (left) in the OBSTABLE
       SW_OUT: SW_OUT
       LW_OUT: LW_OUT
       SW_IN: SW_IN
