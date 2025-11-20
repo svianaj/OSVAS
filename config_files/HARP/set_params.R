@@ -325,34 +325,34 @@ params <- list(
       scale_fcst = list(scaling = 1, new_units = "m3/m3", mult = TRUE),
       scale_obs = list(scaling = 0.01, new_units = "m3/m3", mult = TRUE),      
       obsmin_val = 0,
-      obsmax_val = 10
+      obsmax_val = 100
     ),                
     SWC_2 = list(
       thresholds = c(seq(0.025, 1.1, 0.025)),    
       scale_fcst = list(scaling = 1, new_units = "m3/m3", mult = TRUE),
       scale_obs = list(scaling = 0.01, new_units = "m3/m3", mult = TRUE),      
       obsmin_val = 0,
-      obsmax_val = 10
+      obsmax_val = 100
     ),                
     SWC_3 = list(
       thresholds = c(seq(0.025, 1.1, 0.025)),    
       scale_fcst = list(scaling = 1, new_units = "m3/m3", mult = TRUE),
       scale_obs = list(scaling = 0.01, new_units = "m3/m3", mult = TRUE),      
       obsmin_val = 0,
-      obsmax_val = 10
+      obsmax_val = 100
     ),                
     SWC_4 = list(
       thresholds = c(seq(0.025, 1.1, 0.025)),    
       scale_fcst = list(scaling = 1, new_units = "m3/m3", mult = TRUE),
       scale_obs = list(scaling = 0.01, new_units = "m3/m3", mult = TRUE),      
       obsmin_val = 0,
-      obsmax_val = 10
+      obsmax_val = 100
     ),             
     SWC_5 = list(
       thresholds = c(seq(0.025, 1.1, 0.025)),    
       scale_fcst = list(scaling = 1, new_units = "m3/m3", mult = TRUE),
       scale_obs = list(scaling = 0.01, new_units = "m3/m3", mult = TRUE),      
       obsmin_val = 0,
-      obsmax_val = 10
+      obsmax_val = 100
     )                    
 )

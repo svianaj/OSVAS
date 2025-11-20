@@ -274,7 +274,7 @@ if [[ "$Run_HARP" == true ]]; then
     # To run R & HARP on ATOS, one needs to exit the conda env
     conda deactivate OSVASENV
     module reset
-    source /perm/snh02/DE_Verification/Renv_oper/Setenv
+    source $OSVAS/renv_atos/Setenv
     Rscript "$HARP/verification/point_verif.R" \
       -start_date "${year_start}${month_start}${day_start}" \
       -end_date   "${year_end}${month_end}${day_end}" \
@@ -293,6 +293,10 @@ if [[ "$Display_HARP" == true ]]; then
     echo "▶ Running Step 6: Display HARP verification"
         verif_path=$(yq -r '.verif.verif_path[0]' "$HARPCONFIG_yml")
     cd $HARP/visualization/
+    # To run R & HARP on ATOS, one needs to exit the conda env
+    conda deactivate OSVASENV
+    module reset
+    source $OSVAS/renv_atos/Setenv
     Rscript launch_dynamicapp_atos.R "$verif_path" 9999 > $OSVAS/dynamicapp.log 2>&1 &
     Rscript launch_visapp_atos.R -img_dir "$verif_path" -port 9998 > $OSVAS/visapp.log 2>&1 &
 fi

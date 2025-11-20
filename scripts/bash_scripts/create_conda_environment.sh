@@ -56,9 +56,6 @@ fi
 # Refresh PATH for current script execution
 export PATH="$HOME/.local/bin:$PATH"
 
-
-
-
 # 5. Install Python packages from requirements.txt
 REQ_FILE="../../requirements.txt"
 if [[ -f "$REQ_FILE" ]]; then
@@ -69,6 +66,25 @@ else
     echo "⚠️ Requirements file not found at $REQ_FILE. Skipping pip install."
 fi
 
-# 6. Final activation message
-echo "✅ Conda environment '$CONDAENV' is ready. If you didn't source this script, activate it with conda activate $CONDAENV"
+# 6. If on ATOS system, install HARP libraries & dependencies in an isolated Renv
+if [[ -d "/ec/res4/scratch" ]]; then
+   module reset
+   cd ../../renv_atos/
+   #./atos_renv_setup.sh
+   CURRENT_WDIR="$(pwd)"
+   SETENV_FILE="$(pwd)/Setenv"
+   # Update R_PROFILE_USER line
+   sed -i "s|^export R_PROFILE_USER=.*|export R_PROFILE_USER=$CURRENT_WDIR/.Rprofile|" "$SETENV_FILE"
+
+   # Update RENV_PROJECT line
+   sed -i "s|^export RENV_PROJECT=.*|export RENV_PROJECT=$CURRENT_WDIR/|" "$SETENV_FILE"
+   echo "Finished HARP installation in Renv; to test it in this terminal, do: "
+   echo " module reset "
+   echo " source $CURRENT_WDIR/Setenv "
+   echo " Rscript -e "library(harp)" "
+fi
+
+# 7. Final activation message
+echo "✅ Conda environment '$CONDAENV' is ready. Activate it with conda activate $CONDAENV"
+
 
